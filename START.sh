@@ -63,30 +63,17 @@ echo ""
 echo "Installing dependencies..."
 pip install --quiet --upgrade pip
 pip install --quiet -r bayesopt/tuner/requirements.txt
-pip install --quiet -r dashboard/requirements.txt
+if [ -f "dashboard/requirements.txt" ]; then
+    pip install --quiet -r dashboard/requirements.txt
+fi
 echo "✓ All dependencies installed"
 
-# Launch both components
+# Launch dashboard
 echo ""
 echo "=========================================="
-echo "  Launching BayesOpt..."
+echo "  Launching BayesOpt Dashboard..."
 echo "=========================================="
 echo ""
-echo "Starting Dashboard in background..."
-python3 -m dashboard.app &
-DASHBOARD_PID=$!
-echo "Dashboard running at: http://localhost:8050 (PID: $DASHBOARD_PID)"
-echo ""
-echo "Starting Tuner GUI..."
-python3 -m bayesopt.tuner.gui
-
-# When tuner closes, ask if user wants to keep dashboard running
-echo ""
-read -p "Tuner closed. Stop dashboard? (y/n): " stop_dashboard
-if [[ "$stop_dashboard" == "y" || "$stop_dashboard" == "Y" ]]; then
-    echo "Stopping dashboard..."
-    kill $DASHBOARD_PID 2>/dev/null || true
-else
-    echo "Dashboard still running at http://localhost:8050"
-    echo "To stop it later, run: kill $DASHBOARD_PID"
-fi
+echo "Starting Dashboard..."
+echo "Dashboard will open at: http://localhost:8050"
+python3 -m dashboard.app

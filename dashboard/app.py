@@ -33,7 +33,7 @@ This dashboard provides complete control over the tuning system with:
 """
 
 import dash
-from dash import dcc, html, Input, Output, State, callback_context, ALL, MATCH
+from dash import dcc, html, Input, Output, State, callback_context, ALL, MATCH, no_update
 import dash_bootstrap_components as dbc
 import plotly.graph_objs as go
 import plotly.express as px
@@ -2510,34 +2510,12 @@ def start_tour(n_clicks, state):
                 ])
             ])
         ])
-    ])"""
-Comprehensive Browser-Based Dashboard for Bayesian Optimization Tuner.
+    ])
 
-This dashboard provides complete control over the tuning system with:
-- GitHub-inspired professional design (pure white with orange accents)
-- Two-level mode system (Normal/Advanced)
-- Dark/Light theme toggle
-- Collapsible sidebar navigation
-- Keyboard shortcuts
-- Real-time monitoring
-- Advanced ML algorithm selection
-- Danger Zone for sensitive operations
-- Productivity features (Notes & To-Do)
-- Optional visualizations
-"""
 
-import dash
-from dash import dcc, html, Input, Output, State, callback_context, ALL, MATCH, no_update
-import dash_bootstrap_components as dbc
-import plotly.graph_objs as go
-import plotly.express as px
-from datetime import datetime
-import json
-import sys
-import os
-from pathlib import Path
-
-# Add parent directory to path for tuner imports
+# ============================================================================
+# Button Callback Functions
+# ============================================================================
 sys.path.insert(0, str(Path(__file__).parent.parent / "bayesopt" / "tuner"))
 
 try:
@@ -5673,28 +5651,6 @@ def update_status_bar(n_intervals, state):
     success = f"{state.get('success_rate', 0.0):.1%}"
     
     return current_time, shots, success
-
-
-if __name__ == '__main__':
-    import webbrowser
-    import threading
-    
-    print("=" * 60)
-    print("BayesOpt Dashboard Starting")
-    print("=" * 60)
-    print(f"Opening browser to: http://localhost:8050")
-    print(f"Tuner integration: {'Available' if TUNER_AVAILABLE else 'Demo mode'}")
-    print("=" * 60)
-    
-    # Open browser after a short delay to ensure server is ready
-    def open_browser():
-        import time
-        time.sleep(1.5)
-        webbrowser.open('http://localhost:8050')
-    
-    threading.Thread(target=open_browser, daemon=True).start()
-    
-    app.run(debug=True, host='0.0.0.0', port=8050)
 
 
 if __name__ == '__main__':
