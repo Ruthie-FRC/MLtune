@@ -21,8 +21,15 @@
         "PowerShell": {
             "source": "PowerShell",
             "args": ["-NoExit", "-File", "${workspaceFolder}\\activate_venv.ps1"]
+        },
+        "Command Prompt": {
+            "path": "cmd.exe",
+            "args": ["/K", "${workspaceFolder}\\.venv\\Scripts\\activate.bat"]
         }
     },
-    "python-envs.defaultEnvManager": "ms-python.python:system",
-    "python-envs.pythonProjects": []
+    "files.eol": "\n",
+    "files.associations": {
+        "*.sh": "shellscript",
+        "*.bat": "bat"
+    }
 }
