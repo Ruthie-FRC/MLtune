@@ -1,12 +1,12 @@
 # Contributing
 
-## Setup
+## Development Setup
 
 ```bash
 git clone https://github.com/Ruthie-FRC/MLtune.git
 cd MLtune
 python3 -m venv .venv
-source .venv/bin/activate  # or .venv\Scripts\activate on Windows
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r src/mltune/tuner/requirements.txt
 pip install -r src/dashboard/requirements.txt
 ```
@@ -16,123 +16,120 @@ pip install -r src/dashboard/requirements.txt
 ```
 src/
 ├── mltune/
-│   ├── tuner/          # Core tuning logic
-│   │   ├── config.py   # Config loading
+│   ├── tuner/          # Core tuning system
+│   │   ├── config.py   # Configuration loading
 │   │   ├── tuner.py    # Main coordinator
 │   │   ├── optimizer.py # Bayesian optimization
-│   │   ├── nt_interface.py # NetworkTables
+│   │   ├── nt_interface.py # NetworkTables communication
 │   │   └── gui.py      # Desktop GUI
-│   └── config/         # User config files
+│   └── config/         # User configuration files
 └── dashboard/          # Web dashboard (Dash/Plotly)
 ```
 
-## Making Changes
+## Code Guidelines
 
-### Code Style
+- Maintain readability
+- Match existing code style
+- Document non-obvious functionality
+- Avoid unnecessary complexity
 
-We don't enforce strict style rules, but:
-- Keep it readable
-- Match surrounding code
-- Add docstrings for non-obvious functions
-- Don't over-engineer
+## Testing
 
-### Testing
+Automated tests are not currently implemented. Manual testing procedure:
 
-We don't have automated tests yet (PRs welcome). For now:
-- Actually run your changes
-- Test with a real robot if possible
-- Check both GUI and dashboard work
+- Execute changes in development environment
+- Test with robot hardware when possible
+- Verify GUI and dashboard functionality
 
-### Documentation
+## Documentation
 
-Keep docs concise and useful. Assume competence - nobody wants hand-holding.
+Documentation should be:
+- Concise and informative
+- Technically accurate
+- Free of unnecessary explanation
 
-## Pull Requests
+## Submitting Changes
 
-1. Fork the repo
-2. Make your changes
-3. Test them
-4. Open a PR with a clear description
+1. Fork the repository
+2. Implement changes
+3. Test functionality
+4. Submit pull request with clear description
 
-We'll review and merge if it makes sense.
+## Architecture
 
-## Architecture Notes
+### System Flow
 
-### Tuner Flow
+1. `tuner.py` coordinates system operation
+2. `nt_interface.py` manages robot communication
+3. `optimizer.py` implements Bayesian optimization
+4. `config.py` handles configuration loading
+5. `gui.py` and `dashboard/` provide user interfaces
 
-1. `tuner.py` coordinates everything
-2. `nt_interface.py` handles robot communication
-3. `optimizer.py` does the Bayesian optimization math
-4. `config.py` loads user settings
-5. `gui.py` and `dashboard/` provide interfaces
+### Design Rationale
 
-### Key Design Decisions
+**Bayesian Optimization**
+- Sample-efficient for robot tuning scenarios
+- Handles measurement noise effectively
+- No gradient information required
 
-**Why Bayesian optimization?**
-- Sample-efficient (important for robot tuning)
-- Handles noisy data well
-- No gradients needed
+**scikit-optimize**
+- Mature, well-tested implementation
+- Straightforward API
+- Adequate performance characteristics
 
-**Why scikit-optimize?**
-- Stable, well-tested
-- Easy to use
-- Good enough performance
+**Separate GUI and Dashboard**
+- GUI: Simple interface for operators
+- Dashboard: Detailed interface for engineers
 
-**Why separate GUI and dashboard?**
-- GUI for drivers (simple, always-on)
-- Dashboard for engineers (detailed, optional)
+**NetworkTables**
+- FRC standard protocol
+- Native WPILib integration
+- Low latency, real-time capable
 
-**Why NetworkTables?**
-- Standard in FRC
-- Works out of the box with WPILib
-- Real-time, low latency
+## Potential Improvements
 
-### What Could Be Better
+- Automated test suite
+- Additional optimization algorithms
+- Enhanced optimization history visualization
+- Improved configuration validation
+- Multi-robot support capability
 
-- Add automated tests
-- Support for more optimization algorithms
-- Better visualization of optimization history
-- Config validation and helpful error messages
-- Multi-robot support
+## Development Tasks
 
-Feel free to work on any of these.
-
-## Common Dev Tasks
-
-### Run the tuner locally
+### Run Tuner
 
 ```bash
 python -m src.mltune.tuner.gui
 ```
 
-### Run the dashboard locally
+### Run Dashboard
 
 ```bash
 python -m src.dashboard.app
 ```
 
-### Test without a robot
+### Test Without Robot
 
-The system falls back to a simulated mode if NetworkTables isn't available. You can test basic functionality without hardware.
+The system provides fallback behavior when NetworkTables is unavailable. Basic functionality can be tested without hardware.
 
-### Add a new coefficient
+### Add Coefficient
 
-Edit `src/mltune/config/COEFFICIENT_TUNING.py`:
+Modify `src/mltune/config/COEFFICIENT_TUNING.py`:
 
 ```python
 COEFFICIENTS = [
     {
-        'name': 'your_coeff',
-        'bounds': (min_value, max_value),
+        'name': 'coefficient_name',
+        'bounds': (minimum, maximum),
         'initial': starting_value
     }
 ]
 ```
 
-### Modify the optimization algorithm
+### Modify Optimization
 
-Look in `src/mltune/tuner/optimizer.py`. The `BayesianOptimizer` class wraps scikit-optimize. Swap it out if you want a different approach.
+See `src/mltune/tuner/optimizer.py`. The `BayesianOptimizer` class wraps scikit-optimize. Alternative optimization approaches can be implemented by replacing this component.
 
-## Questions?
+## Support
 
-Open an issue. We'll help.
+For questions or issues, open a GitHub issue.

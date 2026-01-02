@@ -2,32 +2,32 @@
 
 ## Overview
 
-Copy the Java files from `java/` into your robot project. These provide the NetworkTables interface that the tuner needs.
+Integration requires copying Java files from the `java/` directory into your robot project. These files provide the NetworkTables interface required for communication with the tuning system.
 
-## Files You Need
+## Required Files
 
-**TunerInterface.java** - Main interface class
-- Handles NetworkTables communication
+**TunerInterface.java**
+- Manages NetworkTables communication
 - Logs shot data (distance, angle, hit/miss)
-- Receives updated coefficients from tuner
+- Receives coefficient updates from tuner
 
-**LoggedTunableNumber.java** - Wrapper for tunable values
-- Makes any number tunable via NetworkTables
+**LoggedTunableNumber.java**
+- Wrapper class for tunable parameters
+- Provides NetworkTables integration
 - Logs value changes automatically
-- Drop-in replacement for constants
 
-The other files are examples - use them if they match your setup, ignore otherwise.
+Additional files (FiringSolutionSolver.java, Constants_Addition.java) are example implementations.
 
-## Basic Integration
+## Integration Steps
 
-### 1. Add the Files
+### 1. Add Files to Project
 
-Put `TunerInterface.java` and `LoggedTunableNumber.java` in your robot code package, e.g.:
+Place `TunerInterface.java` and `LoggedTunableNumber.java` in your robot code package:
 ```
 src/main/java/frc/robot/tuning/
 ```
 
-### 2. Replace Your Constants
+### 2. Replace Static Constants
 
 **Before:**
 ```java
@@ -42,35 +42,35 @@ private static LoggedTunableNumber k1 =
 private static LoggedTunableNumber k2 = 
     new LoggedTunableNumber("k2", 1.0);
 
-// Use .get() to read values
+// Access values using get()
 double value = k1.get();
 ```
 
-### 3. Initialize the Tuner Interface
+### 3. Initialize Tuner Interface
 
-In your `RobotContainer` or main `Robot` class:
+In `RobotContainer` or `Robot` class:
 
 ```java
 private TunerInterface tuner;
 
 public RobotContainer() {
     tuner = new TunerInterface();
-    // ... rest of your init code
+    // Additional initialization...
 }
 ```
 
-### 4. Log Shot Data
+### 4. Log Shot Results
 
-After each shot, call:
+After each shot attempt:
 
 ```java
 tuner.logShot(distance, angle, didHit);
 ```
 
-Where:
-- `distance` - Distance to target in meters
-- `angle` - Angle to target in degrees
-- `didHit` - `true` if scored, `false` if missed
+Parameters:
+- `distance` - Distance to target (meters)
+- `angle` - Angle to target (degrees)
+- `didHit` - Boolean indicating shot success
 
 ### 5. Periodic Updates
 
@@ -79,19 +79,19 @@ In `robotPeriodic()`:
 ```java
 @Override
 public void robotPeriodic() {
-    tuner.periodic();  // Updates coefficients from NetworkTables
+    tuner.periodic();
 }
 ```
 
-## That's It
+## System Behavior
 
-The tuner will:
-- Read your shot data via NetworkTables
-- Optimize coefficients using Bayesian optimization
-- Push updated values back to the robot
-- Log everything for review
+The tuner performs the following operations:
+- Reads shot data from NetworkTables
+- Applies Bayesian optimization to determine optimal coefficients
+- Publishes updated values to NetworkTables
+- Maintains logs for analysis
 
-## Example: Shooter Subsystem
+## Example Implementation
 
 ```java
 public class Shooter extends SubsystemBase {
@@ -107,19 +107,16 @@ public class Shooter extends SubsystemBase {
     }
     
     public void shoot(double distance, double angle) {
-        // Calculate and shoot
         double velocity = calculateVelocity(distance, angle);
         setVelocity(velocity);
         
-        // Wait for shot to complete...
+        // Wait for shot completion...
         
-        // Log the result
-        boolean hit = checkIfScored();  // Your detection logic
+        boolean hit = checkIfScored();
         tuner.logShot(distance, angle, hit);
     }
     
     private double calculateVelocity(double distance, double angle) {
-        // Use the tunable coefficients
         return kV.get() * distance + kS.get();
     }
 }
@@ -127,7 +124,7 @@ public class Shooter extends SubsystemBase {
 
 ## NetworkTables Structure
 
-The tuner uses these NT keys:
+The system uses the following NetworkTables hierarchy:
 
 ```
 /Tuning/BayesianTuner/
@@ -143,28 +140,28 @@ The tuner uses these NT keys:
       └── ShotLogged (boolean)
 ```
 
-You don't need to touch these directly - the interface handles it.
+The interface classes handle NetworkTables interaction automatically.
 
-## Tips
+## Recommendations
 
-- Test with manual coefficient changes first (via NetworkTables or dashboard)
-- Make sure your hit detection is reliable before auto-tuning
-- Start with wide bounds in the tuner config
-- Log at least 10 shots per coefficient for good results
-- Back up coefficients that work before experimenting
+- Test coefficient updates manually via NetworkTables before enabling automatic tuning
+- Verify shot detection reliability before automated optimization
+- Use wide parameter bounds initially in tuner configuration
+- Collect minimum 10 shots per coefficient for meaningful optimization
+- Preserve working coefficients before experimental tuning sessions
 
 ## Troubleshooting
 
 **Tuner shows disconnected:**
-- Check NetworkTables is running
-- Verify team number matches in both robot and tuner config
+- Verify NetworkTables is operational
+- Check team number matches in robot and tuner configurations
 
 **Coefficients not updating:**
-- Check `TunerEnabled` is true
-- Make sure `periodic()` is being called
-- Look at the tuner logs
+- Verify `TunerEnabled` is set to true
+- Confirm `periodic()` is called in robot loop
+- Check tuner application logs
 
 **Shot data not received:**
-- Verify you're calling `logShot()`
-- Check the dashboard shows recent shots
-- Look for errors in driver station logs
+- Verify `logShot()` calls are executed
+- Check dashboard for recent shot entries
+- Review driver station logs for errors

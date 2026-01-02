@@ -1,10 +1,13 @@
 # Usage Guide
 
-## Config Files
+## Configuration
 
-Everything's in `src/mltune/config/`:
+Configuration files are located in `src/mltune/config/`.
 
-**COEFFICIENT_TUNING.py** - Define what you're tuning:
+### Defining Coefficients
+
+Edit `COEFFICIENT_TUNING.py` to specify tunable parameters:
+
 ```python
 COEFFICIENTS = [
     {
@@ -12,95 +15,117 @@ COEFFICIENTS = [
         'bounds': (0.0, 1.0),
         'initial': 0.5
     },
-    # ... more coefficients
+    # Additional coefficients...
 ]
 ```
 
-**TUNER_TOGGLES.ini** - Control behavior:
+### System Behavior
+
+Edit `TUNER_TOGGLES.ini` to control tuning behavior:
+
 ```ini
 [tuning]
-autotune_enabled = False          # Auto-optimize after each shot
-auto_advance_on_success = False   # Auto-advance to next coefficient
-shot_threshold = 10               # Shots needed before optimizing
+autotune_enabled = False          # Enable automatic optimization
+auto_advance_on_success = False   # Advance to next coefficient automatically
+shot_threshold = 10               # Minimum shots before optimization
 
 [network]
 team_number = 1234
 server_ip = 10.12.34.2
 ```
 
-## Basic Workflow
+## Operation
 
-1. Start the tuner (see GETTING_STARTED.md)
+### Standard Workflow
+
+1. Launch the tuner application
 2. Enable tuning via dashboard toggle
-3. Shoot and provide hit/miss feedback
-4. Press "Optimize" when you have enough data
-5. Check if the new coefficients work better
-6. Move to next coefficient when satisfied
+3. Perform shots and provide hit/miss feedback
+4. Trigger optimization when sufficient data is collected
+5. Evaluate new coefficients
+6. Advance to next coefficient when satisfied
 
-## Manual vs Auto Mode
+### Operating Modes
 
-**Manual mode** (recommended):
-- You control when to optimize
-- You control when to advance to next coefficient
-- Set both toggles to `False` in config
+**Manual Mode** (Recommended):
+- User-controlled optimization timing
+- User-controlled coefficient advancement
+- Set both `autotune_enabled` and `auto_advance_on_success` to `False`
 
-**Auto mode**:
-- Optimizes automatically after N shots
-- Advances automatically on success
-- Set toggles to `True` in config
+**Automatic Mode**:
+- Automatic optimization after N shots
+- Automatic advancement on success
+- Set both toggles to `True`
 
-## Hotkeys
+## Keyboard Shortcuts
 
-The tuner registers global hotkeys (may need admin/root):
+The system registers global hotkeys (requires administrator/root privileges on some systems):
 
-- `Ctrl+Alt+R` - Run optimization
-- `Ctrl+Alt+N` - Next coefficient
-- `Ctrl+Alt+S` - Start/stop tuning
+- `Ctrl+Alt+R` - Trigger optimization
+- `Ctrl+Alt+N` - Advance to next coefficient
+- `Ctrl+Alt+S` - Toggle tuning
 
-If hotkeys don't work, just use the dashboard or GUI buttons.
+Note: Keyboard support varies by platform. Use dashboard controls if hotkeys are unavailable.
 
-## Dashboard
+## Web Dashboard
 
-Open http://localhost:8050 for the web interface. You can:
+Access the dashboard at http://localhost:8050.
 
-- Toggle tuning on/off
+Available functions:
+- Enable/disable tuning
 - View current coefficient values
-- See optimization history
-- Run optimization manually
-- Skip to next coefficient
-- View logs and shot data
+- Access optimization history
+- Manual optimization control
+- Coefficient navigation
+- Log viewing and shot data analysis
 
-The dashboard auto-updates when the robot sends new data.
+The dashboard updates automatically when new data is received from the robot.
 
-## Common Issues
+## Troubleshooting
 
-**"Disconnected" status:**
-- Check robot is on
-- Verify team number in config
-- Make sure you're on the robot network
+### Connection Issues
 
-**Hotkeys not working:**
-- Run with admin/sudo
-- Or just use the dashboard instead
-- The `keyboard` library can be finicky
+**Symptom**: "Disconnected" status in GUI
 
-**Import errors:**
-- Make sure you ran the start script
-- If not, manually install: `pip install -r src/mltune/tuner/requirements.txt`
+**Solutions**:
+- Verify robot is powered and operational
+- Confirm team number in configuration
+- Check network connection to robot
 
-**Optimization takes forever:**
-- Lower your shot threshold
-- Check that shot data is actually being logged
-- View logs to see what's happening
+### Hotkey Failures
 
-## Tips
+**Symptom**: Keyboard shortcuts not responding
 
-- Start with wide bounds, narrow them down after initial tuning
-- More shots = better optimization, but diminishing returns after ~20
-- Watch the logs - they tell you everything that's happening
-- The dashboard is more reliable than hotkeys on most systems
-- Back up your tuned coefficients before resetting
+**Solutions**:
+- Run application with elevated privileges
+- Use dashboard controls as alternative
+- Note: The `keyboard` library has platform-specific limitations
 
-## Logs
+### Import Errors
 
-Logs go to `tuner_logs/` with timestamps. Check them if something seems wrong.
+**Symptom**: Module import failures
+
+**Solutions**:
+- Verify start script was executed
+- Manual installation: `pip install -r src/mltune/tuner/requirements.txt`
+
+### Optimization Delays
+
+**Symptom**: Extended optimization duration
+
+**Solutions**:
+- Reduce shot threshold in configuration
+- Verify shot data is being logged correctly
+- Monitor logs for diagnostic information
+
+## Recommendations
+
+- Begin with wide parameter bounds, then narrow based on initial results
+- Collect 10-20 shots per coefficient for reliable optimization
+- Monitor application logs for system status
+- Dashboard provides more reliable control than hotkeys on most platforms
+- Back up optimized coefficients before parameter resets
+
+## Logging
+
+Logs are stored in `tuner_logs/` with timestamps. Review logs for troubleshooting and analysis.

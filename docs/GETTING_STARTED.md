@@ -1,26 +1,30 @@
 # Getting Started
 
-## Install Python
+## Prerequisites
 
-You need Python 3.8 or newer. Check if you have it:
+Python 3.8 or newer is required. Verify your installation:
 
 ```bash
 python3 --version  # Mac/Linux
 python --version   # Windows
 ```
 
-Don't have it? Get it from [python.org](https://python.org). On Windows, check "Add Python to PATH" during install.
+If Python is not installed, download it from [python.org](https://python.org). Windows users should enable "Add Python to PATH" during installation.
 
-## Get the Code
+## Installation
+
+Clone the repository:
 
 ```bash
 git clone https://github.com/Ruthie-FRC/MLtune.git
 cd MLtune
 ```
 
-Or download the ZIP from GitHub if you don't have git.
+Alternatively, download the repository as a ZIP file from GitHub.
 
-## Run It
+## Running the Application
+
+Execute the appropriate start script for your platform:
 
 **Windows:**
 ```bash
@@ -33,30 +37,32 @@ chmod +x scripts/START.sh
 scripts/START.sh
 ```
 
-The script creates a venv, installs dependencies, and launches both the GUI and web dashboard. First run takes a minute while it installs packages.
+The start script performs the following:
+- Creates a Python virtual environment
+- Installs required dependencies
+- Launches the GUI application
+- Starts the web dashboard (http://localhost:8050)
 
-## What You Get
+Initial startup takes approximately one minute while dependencies install. Subsequent launches are immediate.
 
-- **GUI window** - Shows connection status and logs
-- **Web dashboard** - Open http://localhost:8050 in your browser
-- **Auto-reconnect** - Handles robot reboots gracefully
+## Robot Configuration
 
-## Configure Your Robot
+Before tuning, integrate the NetworkTables interface into your robot code. See [INTEGRATION.md](INTEGRATION.md) for instructions.
 
-Before tuning, you need to add our NetworkTables interface to your robot code. See [INTEGRATION.md](INTEGRATION.md).
+## Verification
 
-## Verify It Works
+After launching the application:
 
-1. Connect your laptop to the robot network
-2. Run the start script
-3. Check the GUI - should show "Connected" in green
-4. Open the dashboard - should show live robot data
+1. Connect your laptop to the robot's network
+2. Check the GUI window for "Connected" status
+3. Open http://localhost:8050 to access the web dashboard
+4. Verify live robot data appears in the dashboard
 
-If something breaks, check that:
-- Your robot is on and connected
-- NetworkTables is running on the robot
-- Your team number is correct in the config
+If connection fails:
+- Verify the robot is powered on and NetworkTables is running
+- Check that the team number in the configuration matches your robot
+- Ensure your laptop is connected to the correct network
 
-## What's Next?
+## Next Steps
 
-Read [USAGE.md](USAGE.md) to actually tune something.
+Refer to [USAGE.md](USAGE.md) for configuration and tuning procedures.

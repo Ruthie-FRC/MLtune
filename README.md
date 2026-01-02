@@ -1,68 +1,52 @@
 # MLtune
 
-Bayesian optimization for FRC robot parameter tuning. Tune shooter coefficients (or anything else) automatically using machine learning.
+Automatic parameter tuning for FRC robots using Bayesian optimization.
 
-## What It Does
+## Overview
 
-You take shots. You tell it if you hit or missed. It figures out better coefficients. Repeat until your shooter is dialed in.
+MLtune tunes robot parameters (shooter coefficients, PID gains, etc.) by learning from shot data. The system uses Bayesian optimization to efficiently explore the parameter space and find optimal values.
 
-Uses Bayesian optimization because it's sample-efficient and handles noisy data well - perfect for robot tuning where test time is limited.
+The tuner runs on your driver station laptop and communicates with the robot via NetworkTables. After each shot, you provide feedback (hit/miss), and the system updates its model to suggest better parameters.
 
-## Quick Start
+## Installation
 
 ```bash
 git clone https://github.com/Ruthie-FRC/MLtune.git
 cd MLtune
-
-# Run (creates venv, installs deps, launches GUI + dashboard)
-scripts/START.sh  # Mac/Linux
-scripts\START.bat  # Windows
+scripts/START.sh  # or START.bat on Windows
 ```
 
-First run takes a minute to install packages. Subsequent runs are instant.
-
-## Features
-
-- **Bayesian optimization** - Smart, sample-efficient tuning
-- **NetworkTables integration** - Works with standard WPILib
-- **GUI + web dashboard** - Desktop window and http://localhost:8050
-- **Auto-reconnect** - Handles robot reboots gracefully
-- **Hotkeys** - Quick controls (when they work)
-- **Logging** - Everything is logged for review
+The start script creates a virtual environment, installs dependencies, and launches both the GUI and web dashboard.
 
 ## Requirements
 
-- Python 3.8+
-- WPILib 2024+ on your robot
-- NetworkTables connection
+- Python 3.8 or newer
+- WPILib 2024+ (for robot integration)
+- NetworkTables connection between laptop and robot
 
-## Docs
+## Documentation
 
-- [Getting Started](docs/GETTING_STARTED.md) - Install and run
-- [Usage Guide](docs/USAGE.md) - Configure and tune
-- [Robot Integration](docs/INTEGRATION.md) - Add to your robot code
-- [Contributing](docs/CONTRIBUTING.md) - Development guide
+- [Getting Started](docs/GETTING_STARTED.md) - Installation and setup
+- [Usage Guide](docs/USAGE.md) - Configuration and operation
+- [Robot Integration](docs/INTEGRATION.md) - Adding to robot code
+- [Contributing](docs/CONTRIBUTING.md) - Development information
 
-## Structure
+## Repository Structure
 
 ```
 MLtune/
 ├── src/
 │   ├── mltune/       # Core tuning system
-│   └── dashboard/    # Web dashboard
-├── java/             # Robot integration files
-├── scripts/          # Launch scripts
+│   └── dashboard/    # Web interface
+├── java/             # Robot code integration files
+├── scripts/          # Launcher scripts
 └── docs/             # Documentation
 ```
 
 ## License
 
-GPL-3.0 - see LICENSE
+GPL-3.0 - See LICENSE for details.
 
-## Support
+## Issues and Support
 
-Open an issue if something breaks or doesn't make sense.
-
----
-
-Built for FRC by Ruthie-FRC
+Report issues at https://github.com/Ruthie-FRC/MLtune/issues
