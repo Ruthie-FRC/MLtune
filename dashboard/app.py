@@ -130,12 +130,6 @@ COEFFICIENT_CONFIG = {
     'kExitVelocity': {'step': 0.1, 'min': 0, 'max': 30}
 }
 
-# GitHub-inspired CSS with pure white background and orange accents
-
-# Robot Game JavaScript
-
-# Inject custom CSS and JavaScript
-
 
 def create_top_nav():
     """Create the top navigation bar."""
