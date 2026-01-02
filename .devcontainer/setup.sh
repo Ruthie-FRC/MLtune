@@ -4,7 +4,7 @@
 
 set -e
 
-echo "Setting up BayesOpt development environment..."
+echo "Setting up MLtune development environment..."
 
 # Create virtual environment
 if [ ! -d ".venv" ]; then
@@ -21,7 +21,7 @@ pip install --quiet --upgrade pip
 
 # Install tuner dependencies
 echo "  - Installing tuner dependencies..."
-pip install --quiet -r bayesopt/tuner/requirements.txt
+pip install --quiet -r mltune/tuner/requirements.txt
 
 # Install dashboard dependencies
 echo "  - Installing dashboard dependencies..."
@@ -29,9 +29,9 @@ pip install --quiet -r dashboard/requirements.txt
 
 # Append auto-activation to bashrc if not already there
 if [[ -f ~/.bashrc ]]; then
-    if ! grep -q "_activate_bayesopt_venv" ~/.bashrc; then
+    if ! grep -q "_activate_mltune_venv" ~/.bashrc; then
         echo "" >> ~/.bashrc
-        echo "# Auto-activate BayesOpt virtual environment" >> ~/.bashrc
+        echo "# Auto-activate MLtune virtual environment" >> ~/.bashrc
         cat .devcontainer/bashrc_append.sh >> ~/.bashrc
         echo "✅ Added auto-activation to ~/.bashrc"
     fi

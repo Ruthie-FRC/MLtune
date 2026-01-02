@@ -1,5 +1,5 @@
 {
-  "name": "BayesOpt Development Environment",
+  "name": "MLtune Development Environment",
   "image": "mcr.microsoft.com/devcontainers/python:3.11",
 
   "features": {
