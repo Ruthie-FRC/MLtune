@@ -44,11 +44,11 @@ import os
 from pathlib import Path
 
 # Add parent directory to path for tuner imports
-sys.path.insert(0, str(Path(__file__).parent.parent / "MLtune" / "tuner"))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 try:
-    from config import TunerConfig
-    from nt_interface import NetworkTablesInterface
+    from mltune.tuner.config import TunerConfig
+    from mltune.tuner.nt_interface import NetworkTablesInterface
     TUNER_AVAILABLE = True
 except ImportError:
     TUNER_AVAILABLE = False

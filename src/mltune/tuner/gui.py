@@ -18,11 +18,8 @@ import sys
 import time
 from pathlib import Path
 
-# Add parent directory to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
-
-from MLtune.tuner.config import TunerConfig
-from MLtune.tuner.tuner import BayesianTunerCoordinator
+from mltune.tuner.config import TunerConfig
+from mltune.tuner.tuner import BayesianTunerCoordinator
 
 
 class TunerGUI:
