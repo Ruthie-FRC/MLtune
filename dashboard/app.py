@@ -195,11 +195,11 @@ def create_sidebar():
 
 
 def create_robot_game_view():
-    """Create the robot jumping game (appears when disconnected)."""
+    """Create the robot jumping game (hidden when disconnected)."""
     return html.Div(
         id='robot-game-container',
         style={
-            'display': 'none',  # Hidden by default, shown when disconnected
+            'display': 'none',  # Hidden by default, hidden when disconnected
             'textAlign': 'center',
             'padding': '50px 0'
         },
@@ -221,7 +221,7 @@ def create_robot_game_view():
                 ),
                 html.Div(id='game-score', children="Score: 0", style={'fontSize': '24px', 'fontWeight': 'bold', 'color': 'var(--accent-primary)'}),
                 html.P("Press SPACE to jump over obstacles!", style={'fontSize': '14px', 'marginTop': '10px'}),
-                html.P("Game automatically appears when robot is disconnected", style={'fontSize': '12px', 'color': 'var(--text-tertiary)', 'fontStyle': 'italic'}),
+                html.P("Game is hidden when robot is disconnected", style={'fontSize': '12px', 'color': 'var(--text-tertiary)', 'fontStyle': 'italic'}),
             ])
         ]
     )
@@ -230,7 +230,7 @@ def create_robot_game_view():
 def create_dashboard_view():
     """Create the main dashboard view with quick actions."""
     return html.Div([
-        # Robot game (shown when disconnected)
+        # Robot game (hidden when disconnected)
         create_robot_game_view(),
         
         # Breadcrumb navigation
@@ -1535,8 +1535,8 @@ def create_help_view():
         
         html.Div(className="card", children=[
             html.Div("Robot Runner Game", className="card-header"),
-            html.P("When the robot is disconnected, a fun jumping game automatically appears!"),
-            html.P("Press SPACE to jump over obstacles. Score points and challenge yourself during downtime."),
+            html.P("When the robot is disconnected, the game is hidden to keep focus on the dashboard."),
+            html.P("The game only appears when the robot is connected."),
             html.P(html.Em("Like Chrome's dino game, but with a robot!"), style={'color': 'var(--text-secondary)'})
         ])
     ])
@@ -1707,10 +1707,10 @@ def dismiss_banner(n_clicks):
     [State('app-state', 'data')]
 )
 def toggle_robot_game(n_intervals, state):
-    """Show robot game when disconnected from robot."""
+    """Hide robot game when disconnected from robot."""
     if state.get('connection_status') == 'disconnected':
-        return {'display': 'block', 'textAlign': 'center', 'padding': '50px 0'}
-    return {'display': 'none'}
+        return {'display': 'none'}
+    return {'display': 'block', 'textAlign': 'center', 'padding': '50px 0'}
 
 
 @app.callback(
