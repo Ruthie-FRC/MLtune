@@ -1,6 +1,6 @@
 # Troubleshooting Guide
 
-Common issues and solutions for the BayesOpt tuner.
+Common issues and solutions for the MLtune tuner.
 
 ## Table of Contents
 
@@ -43,10 +43,10 @@ Common issues and solutions for the BayesOpt tuner.
 cd /path/to/BAYESOPT
 
 # Install/reinstall dependencies
-pip install -r bayesopt/tuner/requirements.txt --upgrade
+pip install -r mltune/tuner/requirements.txt --upgrade
 
 # If using Python 3 explicitly
-pip3 install -r bayesopt/tuner/requirements.txt --upgrade
+pip3 install -r mltune/tuner/requirements.txt --upgrade
 ```
 
 **Common missing modules:**
@@ -73,7 +73,7 @@ sudo dnf install python3-tkinter
 **Solution:**
 1. Open Command Prompt
 2. Navigate to repository: `cd C:\FRC\BAYESOPT`
-3. Run manually: `python bayesopt\tuner\main.py`
+3. Run manually: `python mltune\tuner\main.py`
 4. Read the error message
 5. Look up specific error in this guide
 
@@ -91,7 +91,7 @@ chmod +x START_TUNER.sh
 
 Or run with Python directly:
 ```bash
-python3 bayesopt/tuner/main.py
+python3 mltune/tuner/main.py
 ```
 
 ## Connection Issues
@@ -332,7 +332,7 @@ auto_advance_shot_threshold = 10  # Must have enough shots
 
 1. **Check this guide** for your specific issue
 2. **Check logs** in `tuner_logs/` directory
-3. **Run unit tests:** `cd bayesopt/tuner && python run_tests.py`
+3. **Run unit tests:** `cd mltune/tuner && python run_tests.py`
 4. **Verify setup** following [SETUP.md](SETUP.md)
 5. **Check Java integration** following [JAVA_INTEGRATION.md](JAVA_INTEGRATION.md)
 
@@ -385,7 +385,7 @@ print(NetworkTables.isConnected())
 
 ### Run Unit Tests
 ```bash
-cd bayesopt/tuner
+cd mltune/tuner
 python run_tests.py
 ```
 
@@ -399,7 +399,7 @@ tail -50 tuner_logs/bayesian_tuner_*.csv
 ### Verify Configuration
 ```bash
 # Check TUNER_TOGGLES.ini
-cat bayesopt/config/TUNER_TOGGLES.ini
+cat mltune/config/TUNER_TOGGLES.ini
 
 # Check Python can import modules
 python -c "import pynetworktables; print('OK')"

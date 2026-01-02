@@ -18,7 +18,7 @@ if __name__ == '__main__':
     from dashboard.app import app
     
     print("=" * 60)
-    print("BayesOpt Dashboard Starting")
+    print("MLtune Dashboard Starting")
     print("=" * 60)
     print(f"Opening browser to: http://localhost:8050")
     print("=" * 60)

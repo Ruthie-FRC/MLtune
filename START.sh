@@ -1,9 +1,9 @@
 #!/bin/bash
 # ═══════════════════════════════════════════════════════════════════════════
-#  BAYESOPT UNIFIED LAUNCHER - MAC/LINUX
+#  MLTUNE UNIFIED LAUNCHER - MAC/LINUX
 #  
 #  One script to run everything! Choose between:
-#  - Tuner: Bayesian optimization tuner with GUI
+#  - Tuner: ML-based optimization tuner with GUI
 #  - Dashboard: Web-based monitoring dashboard
 #  - Both: Run tuner and dashboard together
 #  
@@ -14,7 +14,7 @@
 set -e
 
 echo "=========================================="
-echo "  BayesOpt Unified Launcher"
+echo "  MLtune Unified Launcher"
 echo "=========================================="
 echo ""
 
@@ -62,14 +62,14 @@ source .venv/bin/activate
 echo ""
 echo "Installing dependencies..."
 pip install --quiet --upgrade pip
-pip install --quiet -r bayesopt/tuner/requirements.txt
+pip install --quiet -r mltune/tuner/requirements.txt
 pip install --quiet -r dashboard/requirements.txt
 echo "✓ All dependencies installed"
 
 # Launch both components
 echo ""
 echo "=========================================="
-echo "  Launching BayesOpt..."
+echo "  Launching MLtune..."
 echo "=========================================="
 echo ""
 echo "Starting Dashboard in background..."
@@ -78,7 +78,7 @@ DASHBOARD_PID=$!
 echo "Dashboard running at: http://localhost:8050 (PID: $DASHBOARD_PID)"
 echo ""
 echo "Starting Tuner GUI..."
-python3 -m bayesopt.tuner.gui
+python3 -m mltune.tuner.gui
 
 # When tuner closes, ask if user wants to keep dashboard running
 echo ""

@@ -1,6 +1,6 @@
 # Developer Guide
 
-Comprehensive guide for developers and maintainers of the BayesOpt tuner.
+Comprehensive guide for developers and maintainers of the MLtune tuner.
 
 ## Table of Contents
 
@@ -25,7 +25,7 @@ This document is for developers, maintainers, and advanced users who want to und
 
 ### What This System Does
 
-The BayesOpt tuner uses Bayesian optimization to automatically tune coefficients for a robot shooting system. It:
+The MLtune tuner uses Bayesian optimization to automatically tune coefficients for a robot shooting system. It:
 - Runs on a host machine (Driver Station laptop)
 - Reads performance telemetry via NetworkTables
 - Uses Bayesian optimization to propose coefficient updates
@@ -153,7 +153,7 @@ BAYESOPT/
 │   ├── DEVELOPER_GUIDE.md             # This file
 │   └── CONTRIBUTING.md                # Contribution guidelines
 │
-├── bayesopt/                          # Main Python package
+├── mltune/                          # Main Python package
 │   ├── config/                        # Configuration files
 │   │   ├── TUNER_TOGGLES.ini          # Global settings
 │   │   └── COEFFICIENT_TUNING.py      # Coefficient definitions
@@ -308,15 +308,15 @@ class NetworkTablesInterface:
 
 | File | Responsibility | When to modify |
 |------|---------------|----------------|
-| **bayesopt/config/COEFFICIENT_TUNING.py** | Coefficient definitions, bounds, tuning order | Add/modify coefficients, change ranges |
-| **bayesopt/config/TUNER_TOGGLES.ini** | Global settings, toggles | Add runtime flags |
-| **bayesopt/tuner/config.py** | Load and validate config | Add config validation |
-| **bayesopt/tuner/tuner.py** | Orchestration, safety checks, sequencing | Change tuning logic, add safety features |
-| **bayesopt/tuner/optimizer.py** | Bayesian optimization algorithm | Change optimization algorithm |
-| **bayesopt/tuner/nt_interface.py** | NetworkTables communication | Change telemetry source, add NT keys |
-| **bayesopt/tuner/logger.py** | Logging and CSV output | Add log fields, change format |
-| **bayesopt/tuner/gui.py** | GUI window | Change UI appearance |
-| **bayesopt/tuner/tests/** | Unit tests | Add test coverage |
+| **mltune/config/COEFFICIENT_TUNING.py** | Coefficient definitions, bounds, tuning order | Add/modify coefficients, change ranges |
+| **mltune/config/TUNER_TOGGLES.ini** | Global settings, toggles | Add runtime flags |
+| **mltune/tuner/config.py** | Load and validate config | Add config validation |
+| **mltune/tuner/tuner.py** | Orchestration, safety checks, sequencing | Change tuning logic, add safety features |
+| **mltune/tuner/optimizer.py** | Bayesian optimization algorithm | Change optimization algorithm |
+| **mltune/tuner/nt_interface.py** | NetworkTables communication | Change telemetry source, add NT keys |
+| **mltune/tuner/logger.py** | Logging and CSV output | Add log fields, change format |
+| **mltune/tuner/gui.py** | GUI window | Change UI appearance |
+| **mltune/tuner/tests/** | Unit tests | Add test coverage |
 
 ### Interaction Matrix
 
@@ -362,7 +362,7 @@ source venv/bin/activate  # Mac/Linux
 venv\Scripts\activate  # Windows
 
 # Install dependencies
-pip install -r bayesopt/tuner/requirements.txt
+pip install -r mltune/tuner/requirements.txt
 
 # Install development dependencies
 pip install pytest pytest-cov black flake8
@@ -372,7 +372,7 @@ pip install pytest pytest-cov black flake8
 
 ```bash
 # Run all tests
-cd bayesopt/tuner
+cd mltune/tuner
 python run_tests.py
 
 # Run specific test file
@@ -388,13 +388,13 @@ The project follows PEP 8 style guidelines.
 
 ```bash
 # Format code
-black bayesopt/tuner/
+black mltune/tuner/
 
 # Check style
-flake8 bayesopt/tuner/
+flake8 mltune/tuner/
 
 # Type hints (if using mypy)
-mypy bayesopt/tuner/
+mypy mltune/tuner/
 ```
 
 ## Testing
@@ -461,7 +461,7 @@ python -m pytest tests/test_optimizer.py::test_suggest_value
 python -m pytest -v
 
 # With coverage
-python -m pytest --cov=bayesopt.tuner --cov-report=html
+python -m pytest --cov=mltune.tuner --cov-report=html
 ```
 
 ## Making Changes

@@ -1,15 +1,15 @@
 @echo off
 REM ═══════════════════════════════════════════════════════════════════════════
-REM  BAYESOPT UNIFIED LAUNCHER - WINDOWS
+REM  MLTUNE UNIFIED LAUNCHER - WINDOWS
 REM  
 REM  One script to run everything! Choose between:
-REM  - Tuner: Bayesian optimization tuner with GUI
+REM  - Tuner: ML-based optimization tuner with GUI
 REM  - Dashboard: Web-based monitoring dashboard
 REM  - Both: Run tuner and dashboard together
 REM ═══════════════════════════════════════════════════════════════════════════
 
 echo ==========================================
-echo   BayesOpt Unified Launcher
+echo   MLtune Unified Launcher
 echo ==========================================
 echo.
 
@@ -58,32 +58,32 @@ REM Install/upgrade dependencies
 echo.
 echo Installing dependencies...
 python -m pip install --quiet --upgrade pip
-python -m pip install --quiet -r bayesopt\tuner\requirements.txt
+python -m pip install --quiet -r mltune\tuner\requirements.txt
 python -m pip install --quiet -r dashboard\requirements.txt
 echo [32m✓ All dependencies installed[0m
 
 REM Launch both components
 echo.
 echo ==========================================
-echo   Launching BayesOpt...
+echo   Launching MLtune...
 echo ==========================================
 echo.
 echo Starting Dashboard in background...
-start "BayesOpt Dashboard" python -m dashboard.app
+start "MLtune Dashboard" python -m dashboard.app
 echo Dashboard running at: http://localhost:8050
 echo.
 echo Starting Tuner GUI...
-python -m bayesopt.tuner.gui
+python -m mltune.tuner.gui
 
 REM When tuner closes, ask if user wants to keep dashboard running
 echo.
 set /p stop_dashboard="Tuner closed. Stop dashboard? (y/n): "
 if /i "%stop_dashboard%"=="y" (
     echo Stopping dashboard...
-    taskkill /FI "WINDOWTITLE eq BayesOpt Dashboard*" /F >nul 2>nul
+    taskkill /FI "WINDOWTITLE eq MLtune Dashboard*" /F >nul 2>nul
 ) else (
     echo Dashboard still running at http://localhost:8050
-    echo To stop it, close the "BayesOpt Dashboard" window
+    echo To stop it, close the "MLtune Dashboard" window
 )
 
 pause

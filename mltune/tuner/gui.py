@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 ═══════════════════════════════════════════════════════════════════════════════
-  BAYESIAN OPTIMIZATION TUNER - GUI WINDOW
+  MLTUNE - GUI WINDOW
   
   This creates a popup window when you double-click START_TUNER.bat
   The tuner runs on your LAPTOP and communicates with the robot via NetworkTables.
@@ -21,8 +21,8 @@ from pathlib import Path
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from bayesopt.tuner.config import TunerConfig
-from bayesopt.tuner.tuner import BayesianTunerCoordinator
+from mltune.tuner.config import TunerConfig
+from mltune.tuner.tuner import BayesianTunerCoordinator
 
 
 class TunerGUI:
@@ -39,7 +39,7 @@ class TunerGUI:
     
     def __init__(self):
         self.root = tk.Tk()
-        self.root.title("Bayesian Optimization Tuner")
+        self.root.title("MLtune - ML-based Coefficient Tuner")
         self.root.geometry("800x600")
         self.root.minsize(600, 400)
         

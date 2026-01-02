@@ -1,48 +1,48 @@
 #!/bin/bash
-# Auto-activation script for BayesOpt virtual environment
+# Auto-activation script for MLtune virtual environment
 # Source this file in your shell configuration to automatically activate
 # the virtual environment when you cd into this directory.
 #
 # Add to your ~/.bashrc or ~/.zshrc:
-#   source /path/to/BAYESOPT/activate_venv.sh
+#   source /path/to/MLtune/activate_venv.sh
 #
 
-# Function to check if we're in the BayesOpt directory or a subdirectory
-_bayesopt_activate_venv() {
-    local bayesopt_root
+# Function to check if we're in the MLtune directory or a subdirectory
+_mltune_activate_venv() {
+    local mltune_root
     local current_dir="$PWD"
 
-    # Try to find the BAYESOPT directory by looking for bayesopt/ and START_TUNER.sh
+    # Try to find the MLtune directory by looking for mltune/ and START_TUNER.sh
     while [[ "$current_dir" != "/" ]]; do
-        if [[ -d "$current_dir/bayesopt" ]] && [[ -f "$current_dir/START_TUNER.sh" ]]; then
-            bayesopt_root="$current_dir"
+        if [[ -d "$current_dir/mltune" ]] && [[ -f "$current_dir/START_TUNER.sh" ]]; then
+            mltune_root="$current_dir"
             break
         fi
         current_dir=$(dirname "$current_dir")
     done
 
-    # If we found the BayesOpt directory and not already in the venv
-    if [[ -n "$bayesopt_root" ]] && [[ "$VIRTUAL_ENV" != "$bayesopt_root/.venv" ]]; then
+    # If we found the MLtune directory and not already in the venv
+    if [[ -n "$mltune_root" ]] && [[ "$VIRTUAL_ENV" != "$mltune_root/.venv" ]]; then
         # Create venv if it doesn't exist
-        if [[ ! -d "$bayesopt_root/.venv" ]]; then
+        if [[ ! -d "$mltune_root/.venv" ]]; then
             echo "Creating virtual environment..."
-            python3 -m venv "$bayesopt_root/.venv"
+            python3 -m venv "$mltune_root/.venv"
 
             # Install dependencies
-            source "$bayesopt_root/.venv/bin/activate"
+            source "$mltune_root/.venv/bin/activate"
             echo "Installing dependencies..."
             pip install --quiet --upgrade pip
-            pip install --quiet -r "$bayesopt_root/bayesopt/tuner/requirements.txt"
-            pip install --quiet -r "$bayesopt_root/dashboard/requirements.txt"
+            pip install --quiet -r "$mltune_root/mltune/tuner/requirements.txt"
+            pip install --quiet -r "$mltune_root/dashboard/requirements.txt"
             echo "✓ Virtual environment created and dependencies installed"
         else
-            source "$bayesopt_root/.venv/bin/activate"
+            source "$mltune_root/.venv/bin/activate"
             echo "✓ Virtual environment activated (.venv)"
         fi
     fi
 
-    # Deactivate if we've left the BayesOpt directory
-    if [[ -z "$bayesopt_root" ]] && [[ -n "$VIRTUAL_ENV" ]] && [[ "$VIRTUAL_ENV" == *"/.venv" ]]; then
+    # Deactivate if we've left the MLtune directory
+    if [[ -z "$mltune_root" ]] && [[ -n "$VIRTUAL_ENV" ]] && [[ "$VIRTUAL_ENV" == *"/.venv" ]]; then
         # Only deactivate if the venv is in a parent directory we've left
         local venv_parent=$(dirname "$VIRTUAL_ENV")
         if [[ "$PWD" != "$venv_parent"* ]]; then
@@ -56,21 +56,21 @@ _bayesopt_activate_venv() {
 if [[ -n "$BASH_VERSION" ]]; then
     # Only override cd if not already overridden
     if ! type -t cd | grep -q "function"; then
-        _bayesopt_cd() {
+        _mltune_cd() {
             builtin cd "$@"
             local result=$?
-            _bayesopt_activate_venv
+            _mltune_activate_venv
             return $result
         }
-        alias cd='_bayesopt_cd'
+        alias cd='_mltune_cd'
     fi
 fi
 
 # Hook into chpwd for zsh
 if [[ -n "$ZSH_VERSION" ]]; then
     autoload -U add-zsh-hook
-    add-zsh-hook chpwd _bayesopt_activate_venv
+    add-zsh-hook chpwd _mltune_activate_venv
 fi
 
 # Activate on shell startup if we're already in the directory
-_bayesopt_activate_venv
+_mltune_activate_venv
