@@ -1537,7 +1537,7 @@ def create_help_view():
             html.Div("Robot Runner Game", className="card-header"),
             html.P("When the robot is disconnected, the game is hidden to keep focus on the dashboard."),
             html.P("The game only appears when the robot is connected."),
-            html.P(html.Em("Like Chrome's dino game, but with a robot!"), style={'color': 'var(--text-secondary)'})
+            html.P(html.Em("A simple jumping game with a robot character."), style={'color': 'var(--text-secondary)'})
         ])
     ])
 
