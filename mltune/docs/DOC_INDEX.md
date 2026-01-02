@@ -1,6 +1,6 @@
 # MLtune Documentation Index
 
-This directory contains all detailed documentation for the BAYESOPT project.
+This directory contains all detailed documentation for the MLTUNE project.
 
 ## Quick Navigation
 

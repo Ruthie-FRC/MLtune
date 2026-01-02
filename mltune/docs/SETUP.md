@@ -41,21 +41,21 @@ You should see something like `Python 3.11.5`
 
 **Option A: Clone with Git (Recommended)**
 ```cmd
-git clone https://github.com/Ruthie-FRC/BAYESOPT.git
-cd BAYESOPT
+git clone https://github.com/Ruthie-FRC/MLTUNE.git
+cd MLTUNE
 ```
 
 **Option B: Download ZIP**
 1. Go to the GitHub repository
 2. Click the green **"Code"** button
 3. Click **"Download ZIP"**
-4. Extract to a folder (e.g., `C:\FRC\BAYESOPT`)
+4. Extract to a folder (e.g., `C:\FRC\MLTUNE`)
 
 ### Step 3: Install Dependencies
 
 Open Command Prompt and run:
 ```cmd
-cd C:\FRC\BAYESOPT
+cd C:\FRC\MLTUNE
 pip install -r mltune/tuner/requirements.txt
 ```
 
@@ -64,7 +64,7 @@ Wait for all packages to install. This only needs to be done once.
 ### Step 4: Create Desktop Shortcut
 
 1. Open **File Explorer**
-2. Navigate to the BAYESOPT folder (e.g., `C:\FRC\BAYESOPT`)
+2. Navigate to the MLTUNE folder (e.g., `C:\FRC\MLTUNE`)
 3. **Double-click** `CREATE_DESKTOP_SHORTCUT.bat`
 4. A shortcut called **"MLtune Tuner"** will appear on your Desktop!
 
@@ -76,7 +76,7 @@ From now on, to start the tuner:
 2. **Double-click the "MLtune Tuner" shortcut** on your Desktop
 3. A GUI window will appear showing connection status
 
-**Alternative:** You can also double-click `START_TUNER.bat` in the BAYESOPT folder.
+**Alternative:** You can also double-click `START_TUNER.bat` in the MLTUNE folder.
 
 ## Mac/Linux Setup
 
@@ -94,8 +94,8 @@ If you need to install Python:
 ### Step 2: Download the Code
 
 ```bash
-git clone https://github.com/Ruthie-FRC/BAYESOPT.git
-cd BAYESOPT
+git clone https://github.com/Ruthie-FRC/MLTUNE.git
+cd MLTUNE
 ```
 
 ### Step 3: Install Dependencies
@@ -227,7 +227,7 @@ pip install -r mltune/tuner/requirements.txt --force-reinstall
 
 **Solution:**
 1. Open Command Prompt
-2. Navigate to BAYESOPT folder
+2. Navigate to MLTUNE folder
 3. Run manually: `python mltune\tuner\main.py`
 4. Read the error message
 5. Check [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for specific error fixes

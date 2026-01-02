@@ -40,7 +40,7 @@ Common issues and solutions for the MLtune tuner.
 **Solution:**
 ```bash
 # Navigate to repository root
-cd /path/to/BAYESOPT
+cd /path/to/MLTUNE
 
 # Install/reinstall dependencies
 pip install -r mltune/tuner/requirements.txt --upgrade
@@ -72,7 +72,7 @@ sudo dnf install python3-tkinter
 
 **Solution:**
 1. Open Command Prompt
-2. Navigate to repository: `cd C:\FRC\BAYESOPT`
+2. Navigate to repository: `cd C:\FRC\MLTUNE`
 3. Run manually: `python mltune\tuner\main.py`
 4. Read the error message
 5. Look up specific error in this guide
@@ -358,7 +358,7 @@ When asking for help, include:
 
 ### Contact
 
-- **GitHub Repository:** [Ruthie-FRC/BAYESOPT](https://github.com/Ruthie-FRC/BAYESOPT)
+- **GitHub Repository:** [Ruthie-FRC/MLTUNE](https://github.com/Ruthie-FRC/MLTUNE)
 - **Issues:** Use GitHub Issues for bug reports and feature requests
 
 ## Diagnostic Commands

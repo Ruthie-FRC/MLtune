@@ -1,5 +1,5 @@
 """
-BAYESOPT
+MLTUNE
 Copyright (C) 2025 Ruthie-FRC
 
 This program is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ------------------------------------------------------
 
-Comprehensive Browser-Based Dashboard for Bayesian Optimization Tuner.
+Comprehensive Browser-Based Dashboard for MLtune.
 
 This dashboard provides complete control over the tuning system with:
 - GitHub-inspired professional design (pure white with orange accents)

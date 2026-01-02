@@ -138,7 +138,7 @@ In this system:
 ### Directory Layout
 
 ```
-BAYESOPT/
+MLTUNE/
 ├── README.md                          # Main overview and quick start
 ├── LICENSE                            # License file
 ├── START_TUNER.bat                    # Windows launcher
@@ -352,8 +352,8 @@ tests
 
 ```bash
 # Clone repository
-git clone https://github.com/Ruthie-FRC/BAYESOPT.git
-cd BAYESOPT
+git clone https://github.com/Ruthie-FRC/MLTUNE.git
+cd MLTUNE
 
 # Create virtual environment (recommended)
 python -m venv venv

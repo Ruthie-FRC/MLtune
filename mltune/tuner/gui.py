@@ -27,7 +27,7 @@ from mltune.tuner.tuner import BayesianTunerCoordinator
 
 class TunerGUI:
     """
-    GUI Window for the Bayesian Optimization Tuner.
+    GUI Window for the MLtune Tuner.
     
     This window provides:
     - Status display (connected/disconnected)

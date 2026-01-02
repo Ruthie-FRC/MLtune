@@ -1,6 +1,6 @@
 # Documentation Standards
 
-This document defines the conventions and standards for all documentation in the BAYESOPT project. Following these standards ensures documentation is maintainable, consistent, and easy to navigate.
+This document defines the conventions and standards for all documentation in the MLTUNE project. Following these standards ensures documentation is maintainable, consistent, and easy to navigate.
 
 ## Table of Contents
 
@@ -39,7 +39,7 @@ Follow these standards for:
 ### Directory Structure
 
 ```
-BAYESOPT/
+MLTUNE/
 ├── README.md                          # Project overview and quick start
 ├── LICENSE                            # License information
 │
@@ -589,8 +589,8 @@ Before you begin, you need:
 ### Step 2: Clone Repository
 
 ```bash
-git clone https://github.com/Ruthie-FRC/BAYESOPT.git
-cd BAYESOPT
+git clone https://github.com/Ruthie-FRC/MLTUNE.git
+cd MLTUNE
 ```
 
 ## See Also
