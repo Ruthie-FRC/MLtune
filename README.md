@@ -35,13 +35,14 @@ The start script creates a virtual environment, installs dependencies, and launc
 
 ```
 MLtune/
-├── src/
-│   ├── mltune/       # Core tuning system
-│   └── dashboard/    # Web interface
-├── java/             # Robot code integration files
-├── scripts/          # Launcher scripts
+├── mltune/           # Core tuning system
+├── dashboard/        # Web interface
+├── java-integration/ # Robot code integration files
+├── scripts/          # Launcher and utility scripts
 └── docs/             # Documentation
 ```
+
+**📁 [See detailed structure guide →](STRUCTURE.md)**
 
 ## License
 

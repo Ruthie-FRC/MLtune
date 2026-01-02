@@ -21,11 +21,11 @@ pip install --quiet --upgrade pip
 
 # Install tuner dependencies
 echo "  - Installing tuner dependencies..."
-pip install --quiet -r src/mltune/tuner/requirements.txt
+pip install --quiet -r mltune/tuner/requirements.txt
 
 # Install dashboard dependencies
 echo "  - Installing dashboard dependencies..."
-pip install --quiet -r src/dashboard/requirements.txt
+pip install --quiet -r dashboard/requirements.txt
 
 # Append auto-activation to bashrc if not already there
 if [[ -f ~/.bashrc ]]; then

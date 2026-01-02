@@ -7,8 +7,8 @@ git clone https://github.com/Ruthie-FRC/MLtune.git
 cd MLtune
 python3 -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
-pip install -r src/mltune/tuner/requirements.txt
-pip install -r src/dashboard/requirements.txt
+pip install -r mltune/tuner/requirements.txt
+pip install -r dashboard/requirements.txt
 ```
 
 ## Project Structure
@@ -114,7 +114,7 @@ The system provides fallback behavior when NetworkTables is unavailable. Basic f
 
 ### Add Coefficient
 
-Modify `src/mltune/config/COEFFICIENT_TUNING.py`:
+Modify `mltune/config/COEFFICIENT_TUNING.py`:
 
 ```python
 COEFFICIENTS = [
@@ -128,7 +128,7 @@ COEFFICIENTS = [
 
 ### Modify Optimization
 
-See `src/mltune/tuner/optimizer.py`. The `BayesianOptimizer` class wraps scikit-optimize. Alternative optimization approaches can be implemented by replacing this component.
+See `mltune/tuner/optimizer.py`. The `BayesianOptimizer` class wraps scikit-optimize. Alternative optimization approaches can be implemented by replacing this component.
 
 ## Support
 

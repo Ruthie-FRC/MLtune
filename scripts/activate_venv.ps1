@@ -14,10 +14,10 @@ function Invoke-MLtuneVenvActivation {
     $currentDir = Get-Location
     $mltuneRoot = $null
 
-    # Try to find the MLtune directory by looking for src\mltune\ and scripts\
+    # Try to find the MLtune directory by looking for mltune\ and scripts\
     $searchDir = $currentDir
     while ($searchDir) {
-        if ((Test-Path "$searchDir\src\mltune") -and (Test-Path "$searchDir\scripts")) {
+        if ((Test-Path "$searchDir\mltune") -and (Test-Path "$searchDir\scripts")) {
             $mltuneRoot = $searchDir
             break
         }
@@ -37,8 +37,8 @@ function Invoke-MLtuneVenvActivation {
             & "$mltuneRoot\.venv\Scripts\Activate.ps1"
             Write-Host "Installing dependencies..."
             python -m pip install --quiet --upgrade pip
-            python -m pip install --quiet -r "$mltuneRoot\src\mltune\tuner\requirements.txt"
-            python -m pip install --quiet -r "$mltuneRoot\src\dashboard\requirements.txt"
+            python -m pip install --quiet -r "$mltuneRoot\mltune\tuner\requirements.txt"
+            python -m pip install --quiet -r "$mltuneRoot\dashboard\requirements.txt"
             Write-Host "✓ Virtual environment created and dependencies installed" -ForegroundColor Green
         } else {
             & "$mltuneRoot\.venv\Scripts\Activate.ps1"

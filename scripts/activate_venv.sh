@@ -12,9 +12,9 @@ _mltune_activate_venv() {
     local mltune_root
     local current_dir="$PWD"
 
-    # Try to find the MLtune directory by looking for src/mltune/ and scripts/
+    # Try to find the MLtune directory by looking for mltune/ and scripts/
     while [[ "$current_dir" != "/" ]]; do
-        if [[ -d "$current_dir/src/mltune" ]] && [[ -d "$current_dir/scripts" ]]; then
+        if [[ -d "$current_dir/mltune" ]] && [[ -d "$current_dir/scripts" ]]; then
             mltune_root="$current_dir"
             break
         fi
@@ -32,8 +32,8 @@ _mltune_activate_venv() {
             source "$mltune_root/.venv/bin/activate"
             echo "Installing dependencies..."
             pip install --quiet --upgrade pip
-            pip install --quiet -r "$mltune_root/src/mltune/tuner/requirements.txt"
-            pip install --quiet -r "$mltune_root/src/dashboard/requirements.txt"
+            pip install --quiet -r "$mltune_root/mltune/tuner/requirements.txt"
+            pip install --quiet -r "$mltune_root/dashboard/requirements.txt"
             echo "✓ Virtual environment created and dependencies installed"
         else
             source "$mltune_root/.venv/bin/activate"

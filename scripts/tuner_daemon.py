@@ -19,8 +19,7 @@ import configparser
 # Add src directory to path to import tuner module
 script_dir = os.path.dirname(os.path.abspath(__file__))
 repo_root = os.path.dirname(script_dir)
-src_dir = os.path.join(repo_root, 'src')
-sys.path.insert(0, src_dir)
+sys.path.insert(0, repo_root)
 
 from mltune.tuner import BayesianTunerCoordinator, TunerConfig, setup_logging
 import logging

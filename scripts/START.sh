@@ -62,8 +62,8 @@ source .venv/bin/activate
 echo ""
 echo "Installing dependencies..."
 pip install --quiet --upgrade pip
-pip install --quiet -r src/mltune/tuner/requirements.txt
-pip install --quiet -r src/dashboard/requirements.txt
+pip install --quiet -r mltune/tuner/requirements.txt
+pip install --quiet -r dashboard/requirements.txt
 echo "✓ All dependencies installed"
 
 # Launch both components
@@ -73,12 +73,12 @@ echo "  Launching MLtune..."
 echo "=========================================="
 echo ""
 echo "Starting Dashboard in background..."
-python3 -m src.dashboard.app &
+python3 -m dashboard.app &
 DASHBOARD_PID=$!
 echo "Dashboard running at: http://localhost:8050 (PID: $DASHBOARD_PID)"
 echo ""
 echo "Starting Tuner GUI..."
-python3 -m src.mltune.tuner.gui
+python3 -m mltune.tuner.gui
 
 # When tuner closes, ask if user wants to keep dashboard running
 echo ""

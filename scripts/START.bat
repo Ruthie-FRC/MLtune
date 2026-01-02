@@ -58,8 +58,8 @@ REM Install/upgrade dependencies
 echo.
 echo Installing dependencies...
 python -m pip install --quiet --upgrade pip
-python -m pip install --quiet -r src\mltune\tuner\requirements.txt
-python -m pip install --quiet -r src\dashboard\requirements.txt
+python -m pip install --quiet -r mltune\tuner\requirements.txt
+python -m pip install --quiet -r dashboard\requirements.txt
 echo [32m✓ All dependencies installed[0m
 
 REM Launch both components
@@ -69,11 +69,11 @@ echo   Launching MLtune...
 echo ==========================================
 echo.
 echo Starting Dashboard in background...
-start "MLtune Dashboard" python -m src.dashboard.app
+start "MLtune Dashboard" python -m dashboard.app
 echo Dashboard running at: http://localhost:8050
 echo.
 echo Starting Tuner GUI...
-python -m src.mltune.tuner.gui
+python -m mltune.tuner.gui
 
 REM When tuner closes, ask if user wants to keep dashboard running
 echo.

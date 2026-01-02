@@ -2,7 +2,7 @@
 
 ## Configuration
 
-Configuration files are located in `src/mltune/config/`.
+Configuration files are located in `mltune/config/`.
 
 ### Defining Coefficients
 
@@ -107,7 +107,7 @@ The dashboard updates automatically when new data is received from the robot.
 
 **Solutions**:
 - Verify start script was executed
-- Manual installation: `pip install -r src/mltune/tuner/requirements.txt`
+- Manual installation: `pip install -r mltune/tuner/requirements.txt`
 
 ### Optimization Delays
 

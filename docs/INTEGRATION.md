@@ -2,7 +2,7 @@
 
 ## Overview
 
-Integration requires copying Java files from the `java/` directory into your robot project. These files provide the NetworkTables interface required for communication with the tuning system.
+Integration requires copying Java files from the `java-integration/` directory into your robot project. These files provide the NetworkTables interface required for communication with the tuning system.
 
 ## Required Files
 
@@ -24,7 +24,7 @@ Additional files (FiringSolutionSolver.java, Constants_Addition.java) are exampl
 
 Place `TunerInterface.java` and `LoggedTunableNumber.java` in your robot code package:
 ```
-src/main/java/frc/robot/tuning/
+src/main/java-integration/frc/robot/tuning/
 ```
 
 ### 2. Replace Static Constants
