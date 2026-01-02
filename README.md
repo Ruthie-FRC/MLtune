@@ -26,10 +26,20 @@ The start script creates a virtual environment, installs dependencies, and launc
 
 ## Documentation
 
+All documentation is in the `docs/` folder:
+
 - [Getting Started](docs/GETTING_STARTED.md) - Installation and setup
 - [Usage Guide](docs/USAGE.md) - Configuration and operation
 - [Robot Integration](docs/INTEGRATION.md) - Adding to robot code
 - [Contributing](docs/CONTRIBUTING.md) - Development information
+- [Repository Structure](docs/STRUCTURE.md) - Detailed navigation guide
+
+### Component Documentation
+
+- [mltune/](docs/mltune/) - Core tuning system
+- [dashboard/](docs/dashboard/) - Web interface
+- [java-integration/](docs/java-integration/) - Robot integration files
+- [scripts/](docs/scripts/) - Launcher scripts
 
 ## Repository Structure
 
@@ -39,10 +49,14 @@ MLtune/
 ├── dashboard/        # Web interface
 ├── java-integration/ # Robot code integration files
 ├── scripts/          # Launcher and utility scripts
-└── docs/             # Documentation
+└── docs/             # All documentation
+    ├── mltune/           # mltune component docs
+    ├── dashboard/        # dashboard component docs
+    ├── java-integration/ # java integration docs
+    └── scripts/          # scripts documentation
 ```
 
-**📁 [See detailed structure guide →](STRUCTURE.md)**
+**📁 [See detailed structure guide →](docs/STRUCTURE.md)**
 
 ## License
 

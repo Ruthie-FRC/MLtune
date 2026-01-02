@@ -13,4 +13,4 @@ Files for integrating MLtune with your robot code.
 
 Copy `TunerInterface.java` and `LoggedTunableNumber.java` into your robot project.
 
-See [../docs/INTEGRATION.md](../docs/INTEGRATION.md) for integration details.
+See [../INTEGRATION.md](../INTEGRATION.md) for integration details.

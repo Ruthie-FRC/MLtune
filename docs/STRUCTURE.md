@@ -21,11 +21,17 @@ MLtune/
 
 **To integrate with your robot:**
 - Copy files from `java-integration/` to your robot project
-- See `docs/INTEGRATION.md`
+- See [INTEGRATION.md](INTEGRATION.md)
 
 **To configure tuning:**
 - Edit `mltune/config/COEFFICIENT_TUNING.py` (define parameters)
 - Edit `mltune/config/TUNER_TOGGLES.ini` (behavior settings)
+
+**For component details:**
+- [mltune documentation](mltune/)
+- [dashboard documentation](dashboard/)
+- [java-integration documentation](java-integration/)
+- [scripts documentation](scripts/)
 
 ## Detailed Breakdown
 

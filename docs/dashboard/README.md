@@ -20,4 +20,4 @@ Once running, open http://localhost:8050 in your browser.
 - Shot history and logs
 - Configuration toggles
 
-See [../docs/USAGE.md](../docs/USAGE.md) for usage information.
+See [../USAGE.md](../USAGE.md) for usage information.

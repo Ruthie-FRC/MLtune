@@ -21,4 +21,4 @@ Edit these files to configure tuning:
 - `tuner/nt_interface.py` - Robot communication
 - `tuner/gui.py` - Desktop GUI
 
-See [../docs/USAGE.md](../docs/USAGE.md) for usage information.
+See [../USAGE.md](../USAGE.md) for usage information.
