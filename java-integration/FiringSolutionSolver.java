@@ -92,7 +92,7 @@ public class FiringSolver extends SubsystemBase {
   // === Shot logging ===
 
   /**
-   * Logs a shot result and solution for BayesOpt tuner analysis,
+   * Logs a shot result and solution for MLtune tuner analysis,
    * including hit/miss, measured parameters and the solver outputs.
    */
   public void logShot(
