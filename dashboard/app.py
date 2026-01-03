@@ -2462,7 +2462,6 @@ if __name__ == '__main__':
     print(f"Opening browser to: http://localhost:8050")
     print("=" * 60)
     print(f"Tuner integration: {'Available' if TUNER_AVAILABLE else 'Demo mode'}")
-    print("=" * 60)
 
     # Open browser after a short delay to ensure server is ready
     def open_browser():
