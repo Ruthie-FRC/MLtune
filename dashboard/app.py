@@ -44,7 +44,7 @@ import os
 from pathlib import Path
 
 # Add parent directory to path for tuner imports
-sys.path.insert(0, str(Path(__file__).parent.parent / "mltune" / "tuner"))
+sys.path.insert(0, str(Path(__file__).parent.parent / "MLtune" / "tuner"))
 
 try:
     from config import TunerConfig
