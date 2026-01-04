@@ -6,7 +6,7 @@ Quick guide to what's where in this repository.
 
 ```
 MLtune/
-├── mltune/           ← Main tuning application (Python)
+├── MLtune/           ← Main tuning application (Python)
 ├── dashboard/        ← Web interface for monitoring
 ├── java-integration/ ← Files to copy into your robot code
 ├── scripts/          ← Launch scripts (START.sh, START.bat, etc.)
@@ -24,18 +24,18 @@ MLtune/
 - See [INTEGRATION.md](INTEGRATION.md)
 
 **To configure tuning:**
-- Edit `mltune/config/COEFFICIENT_TUNING.py` (define parameters)
-- Edit `mltune/config/TUNER_TOGGLES.ini` (behavior settings)
+- Edit `MLtune/config/COEFFICIENT_TUNING.py` (define parameters)
+- Edit `MLtune/config/TUNER_TOGGLES.ini` (behavior settings)
 
 **For component details:**
-- [mltune documentation](mltune/)
+- [MLtune documentation](MLtune/)
 - [dashboard documentation](dashboard/)
 - [java-integration documentation](java-integration/)
 - [scripts documentation](scripts/)
 
 ## Detailed Breakdown
 
-### mltune/
+### MLtune/
 Main Python application for tuning.
 
 - `tuner/` - Core tuning logic
@@ -84,9 +84,9 @@ Documentation.
 | Task | Location |
 |------|----------|
 | Run the tuner | `scripts/START.sh` or `scripts/START.bat` |
-| Configure parameters | `mltune/config/COEFFICIENT_TUNING.py` |
-| Change behavior | `mltune/config/TUNER_TOGGLES.ini` |
+| Configure parameters | `MLtune/config/COEFFICIENT_TUNING.py` |
+| Change behavior | `MLtune/config/TUNER_TOGGLES.ini` |
 | Integrate with robot | `java-integration/` → copy to robot |
 | View documentation | `docs/` |
-| Modify tuning algorithm | `mltune/tuner/optimizer.py` |
+| Modify tuning algorithm | `MLtune/tuner/optimizer.py` |
 | Change dashboard | `dashboard/app.py` |

@@ -11,7 +11,7 @@ All documentation for MLtune is organized in this folder.
 
 ## Component Documentation
 
-- [mltune/](mltune/) - Core tuning system documentation
+- [MLtune/](MLtune/) - Core tuning system documentation
 - [dashboard/](dashboard/) - Web interface documentation
 - [java-integration/](java-integration/) - Robot integration files documentation
 - [scripts/](scripts/) - Launch scripts documentation
