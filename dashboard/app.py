@@ -198,7 +198,7 @@ def create_robot_disconnected_view():
         },
         children=[
             html.Div(className="card", style={'maxWidth': '600px', 'margin': '0 auto', 'padding': '40px'}, children=[
-                html.Div("🤖", style={'fontSize': '64px', 'marginBottom': '20px'}),
+                html.Div("⚠", style={'fontSize': '64px', 'marginBottom': '20px', 'color': 'var(--warning)'}),
                 html.Div("Robot Disconnected", className="card-header", style={'fontSize': '32px', 'border': 'none'}),
                 html.P("Connection to robot lost. Please check your connection.", style={'fontSize': '16px', 'color': 'var(--text-secondary)', 'marginTop': '20px'}),
                 html.P("The dashboard will automatically reconnect when the robot is available.", style={'fontSize': '14px', 'color': 'var(--text-tertiary)', 'fontStyle': 'italic', 'marginTop': '10px'}),
