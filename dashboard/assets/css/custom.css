@@ -441,12 +441,6 @@ select:disabled {
     }
 }
 
-/* Robot Game Styles */
-#robot-game-container canvas {
-    image-rendering: pixelated;
-    image-rendering: crisp-edges;
-}
-
 /* Status Bar at Bottom */
 .status-bar {
     position: fixed;
