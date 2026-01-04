@@ -7,25 +7,44 @@ git clone https://github.com/FRC5892/MLtune.git
 cd MLtune
 python3 -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
-pip install -r mltune/tuner/requirements.txt
+pip install -r MLtune/tuner/requirements.txt
 pip install -r dashboard/requirements.txt
 ```
 
 ## Project Structure
 
 ```
-MLTUNE/
-├── mltune/
+MLtune/
+├── MLtune/             # Main tuning application (Python)
 │   ├── tuner/          # Core tuning system
 │   │   ├── config.py   # Configuration loading
 │   │   ├── tuner.py    # Main coordinator
 │   │   ├── optimizer.py # Bayesian optimization
 │   │   ├── nt_interface.py # NetworkTables communication
-│   │   └── gui.py      # Desktop GUI
+│   │   ├── gui.py      # Desktop GUI
+│   │   ├── logger.py   # Logging utilities
+│   │   ├── main.py     # Entry point
+│   │   └── requirements.txt # Python dependencies
 │   └── config/         # User configuration files
-└── dashboard/          # Web dashboard (Dash/Plotly)
+│       ├── COEFFICIENT_TUNING.py # Define parameters
+│       └── TUNER_TOGGLES.ini # Behavior settings
+├── dashboard/          # Web dashboard (Dash/Plotly)
+│   ├── app.py          # Main dashboard application
+│   ├── __main__.py     # Entry point
+│   └── requirements.txt # Python dependencies
+├── java-integration/   # Files to copy into robot code
+│   ├── TunerInterface.java # Main interface
+│   ├── LoggedTunableNumber.java # Tunable wrapper
+│   ├── FiringSolutionSolver.java # Example implementation
+│   └── Constants_Addition.java # Example constants
+├── scripts/            # Launch and utility scripts
+│   ├── START.sh / START.bat # Main launcher
+│   ├── RUN_TUNER.sh / RUN_TUNER.bat # Alternative launcher
+│   ├── CREATE_DESKTOP_SHORTCUT.bat # Windows shortcut creator
+│   ├── activate_venv.sh / activate_venv.ps1 # Virtual environment auto-activation
+│   └── tuner_daemon.py # Background daemon mode
+└── docs/               # User and developer documentation
 ```
-//TODO: this is out of date, update the repo structure
 
 ## Code Guidelines
 
@@ -100,13 +119,13 @@ Documentation should be:
 ### Run Tuner
 
 ```bash
-python -m src.mltune.tuner.gui
+python -m MLtune.tuner.gui
 ```
 
 ### Run Dashboard
 
 ```bash
-python -m src.dashboard.app
+python -m dashboard.app
 ```
 
 ### Test Without Robot
@@ -115,7 +134,7 @@ The system provides fallback behavior when NetworkTables is unavailable. Basic f
 
 ### Add Coefficient
 
-Modify `mltune/config/COEFFICIENT_TUNING.py`:
+Modify `MLtune/config/COEFFICIENT_TUNING.py`:
 
 ```python
 COEFFICIENTS = [
@@ -129,7 +148,7 @@ COEFFICIENTS = [
 
 ### Modify Optimization
 
-See `mltune/tuner/optimizer.py`. The `BayesianOptimizer` class wraps scikit-optimize. Alternative optimization approaches can be implemented by replacing this component.
+See `MLtune/tuner/optimizer.py`. The `BayesianOptimizer` class wraps scikit-optimize. Alternative optimization approaches can be implemented by replacing this component.
 
 ## Support
 
