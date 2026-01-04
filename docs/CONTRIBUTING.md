@@ -25,6 +25,7 @@ MLTUNE/
 │   └── config/         # User configuration files
 └── dashboard/          # Web dashboard (Dash/Plotly)
 ```
+//TODO: this is out of date, update the repo structure
 
 ## Code Guidelines
 
