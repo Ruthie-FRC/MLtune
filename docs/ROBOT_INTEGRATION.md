@@ -46,40 +46,41 @@ private static LoggedTunableNumber k2 =
 double value = k1.get();
 ```
 
-### 3. Initialize Tuner Interface
+### 3. Check Tuner Status (Optional)
 
-In `RobotContainer` or `Robot` class:
+If you need to check tuner status or implement shooting interlocks:
 
 ```java
-private TunerInterface tuner;
+// In RobotContainer or subsystem
+private TunerInterface tuner = TunerInterface.getInstance();
 
-public RobotContainer() {
-    tuner = new TunerInterface();
-    // Additional initialization...
+// Check if tuner is connected
+if (tuner.isTunerConnected()) {
+    // Tuner is running
+}
+
+// Check if shooting is allowed based on interlocks
+if (tuner.canShoot()) {
+    // Safe to shoot
 }
 ```
 
 ### 4. Log Shot Results
 
-After each shot attempt:
+In your shooter or firing solution subsystem, log shot results after each attempt. See `FiringSolutionSolver.java` for a complete example:
 
 ```java
-tuner.logShot(distance, angle, didHit);
-```
-
-Parameters:
-- `distance` - Distance to target (meters)
-- `angle` - Angle to target (degrees)
-- `didHit` - Boolean indicating shot success
-
-### 5. Periodic Updates
-
-In `robotPeriodic()`:
-
-```java
-@Override
-public void robotPeriodic() {
-    tuner.periodic();
+public void logShot(boolean hit, double distanceMeters, 
+                   double pitchRadians, double exitVelocityMps, 
+                   double yawRadians) {
+    // Publish to NetworkTables for tuner
+    m_shotTimestampPub.set(Timer.getFPGATimestamp());
+    m_hitPub.set(hit);
+    m_distancePub.set(distanceMeters);
+    m_pitchPub.set(pitchRadians);
+    m_velocityPub.set(exitVelocityMps);
+    m_yawPub.set(yawRadians);
+    // Also publish current coefficient values
 }
 ```
 
@@ -93,6 +94,8 @@ The tuner performs the following operations:
 
 ## Example Implementation
 
+See `FiringSolutionSolver.java` for a complete example. Here's a simplified version:
+
 ```java
 public class Shooter extends SubsystemBase {
     private static LoggedTunableNumber kV = 
@@ -100,10 +103,16 @@ public class Shooter extends SubsystemBase {
     private static LoggedTunableNumber kS = 
         new LoggedTunableNumber("Shooter/kS", 0.5);
     
-    private TunerInterface tuner;
+    // NetworkTables publishers for shot data
+    private final BooleanPublisher m_hitPub;
+    private final DoublePublisher m_distancePub;
+    // ... other publishers
     
     public Shooter() {
-        tuner = TunerInterface.getInstance();
+        NetworkTable shotTable = NetworkTableInstance.getDefault().getTable("Shooter");
+        m_hitPub = shotTable.getBooleanTopic("Hit").publish();
+        m_distancePub = shotTable.getDoubleTopic("Distance").publish();
+        // Initialize other publishers
     }
     
     public void shoot(double distance, double angle) {
@@ -113,7 +122,13 @@ public class Shooter extends SubsystemBase {
         // Wait for shot completion...
         
         boolean hit = checkIfScored();
-        tuner.logShot(distance, angle, hit);
+        logShot(hit, distance, angle, velocity);
+    }
+    
+    private void logShot(boolean hit, double distance, double angle, double velocity) {
+        m_hitPub.set(hit);
+        m_distancePub.set(distance);
+        // Publish other shot data to NetworkTables
     }
     
     private double calculateVelocity(double distance, double angle) {
@@ -157,9 +172,9 @@ The interface classes handle NetworkTables interaction automatically.
 - Check team number matches in robot and tuner configurations
 
 **Coefficients not updating:**
-- Verify `TunerEnabled` is set to true
-- Confirm `periodic()` is called in robot loop
+- Verify `TunerEnabled` is set to true in NetworkTables
 - Check tuner application logs
+- Ensure LoggedTunableNumber values are being read with `.get()`
 
 **Shot data not received:**
 - Verify `logShot()` calls are executed

@@ -23,17 +23,20 @@ The launcher will automatically set up a virtual environment, install dependenci
 
 ### 2. Integrate with Robot
 
-Copy the Java files from `java-integration/` to your robot project and add logging for shot attempts:
+Copy the Java files from `java-integration/` to your robot project. Then use `LoggedTunableNumber` for parameters and log shots with your subsystem:
 
 ```java
-// In your robot code
-private TunerInterface tuner = new TunerInterface();
-
-// Replace static constants with tunable values
+// In your subsystem (e.g., FiringSolver or Shooter)
 private LoggedTunableNumber kV = new LoggedTunableNumber("Shooter/kV", 0.12);
 
-// Log each shot attempt
-tuner.logShot(distance, angle, didHit);
+// Use tunable values in calculations
+double velocity = kV.get() * distance;
+
+// After each shot, log the result
+public void logShot(boolean hit, double distance, double pitch, double velocity, double yaw) {
+    // Publish shot data to NetworkTables for tuner analysis
+    // See FiringSolutionSolver.java for full implementation
+}
 ```
 
 ### 3. Tune Parameters
