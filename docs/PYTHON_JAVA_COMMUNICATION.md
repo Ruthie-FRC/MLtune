@@ -217,7 +217,26 @@ To prevent overloading the RoboRIO, the Python tuner implements rate limiting:
 
 - **Write rate limit**: Default 10 Hz (configurable via `MAX_NT_WRITE_RATE_HZ`)
 - **Read rate limit**: Default 20 Hz (configurable via `MAX_NT_READ_RATE_HZ`)
+- **Heartbeat rate limit**: Minimum 0.5 seconds between heartbeats (internal)
 - **Connection retry delay**: 5 seconds between connection attempts
+
+### Configuration
+
+Rate limits can be configured in `MLtune/config/COEFFICIENT_TUNING.py`:
+
+```python
+# RoboRIO Protection - Rate limits for NetworkTables
+MAX_WRITE_RATE_HZ = 5.0    # Max coefficient updates per second
+MAX_READ_RATE_HZ = 20.0    # Max shot data reads per second
+BATCH_WRITES = True        # Batch multiple writes together
+```
+
+Or set them directly in your TunerConfig:
+```python
+config = TunerConfig()
+config.MAX_NT_WRITE_RATE_HZ = 5.0  # Slower for older RoboRIOs
+config.MAX_NT_READ_RATE_HZ = 10.0  # Reduce if seeing network congestion
+```
 
 Bypass rate limiting with `write_coefficient(key, value, force=True)` if needed.
 

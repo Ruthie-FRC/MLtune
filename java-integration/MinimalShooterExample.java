@@ -171,8 +171,7 @@ public class MinimalShooterExample extends SubsystemBase {
             double dragCoeffUsed,
             double airDensityUsed) {
         
-        // Update timestamp LAST - this signals new shot to Python
-        shotTimestampPub.set(Timer.getFPGATimestamp());
+        // Publish all shot data FIRST
         
         // Shot result
         hitPub.set(hit);
@@ -189,6 +188,10 @@ public class MinimalShooterExample extends SubsystemBase {
         // The tuner needs to know which coefficient values were used
         dragCoeffPub.set(dragCoeffUsed);
         airDensityPub.set(airDensityUsed);
+        
+        // Update timestamp LAST - this signals new shot to Python
+        // Python monitors this timestamp to detect when new shot data is available
+        shotTimestampPub.set(Timer.getFPGATimestamp());
         
         System.out.println(String.format(
             "Shot logged: hit=%s, dist=%.2fm, pitch=%.3frad, vel=%.2fm/s",

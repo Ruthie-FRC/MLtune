@@ -944,15 +944,29 @@ class NetworkTablesInterface:
         The Java side checks if (currentTime - heartbeat) < 5.0 seconds.
         This method should be called periodically (e.g., every 1-2 seconds).
         
+        The method includes internal rate limiting - it will only publish
+        if at least 0.5 seconds have passed since the last heartbeat to
+        reduce NetworkTables traffic.
+        
         Dashboard Location: /Tuning/BayesianTuner/Heartbeat
         """
         if not self.is_connected():
             return
         
+        current_time = time.time()
+        
+        # Rate limiting: only publish if >0.5s since last heartbeat
+        if not hasattr(self, '_last_heartbeat_time'):
+            self._last_heartbeat_time = 0.0
+        
+        time_since_last = current_time - self._last_heartbeat_time
+        if time_since_last < 0.5:
+            return  # Too soon, skip this heartbeat
+        
         try:
             tuner_table = NetworkTables.getTable("/Tuning/BayesianTuner")
-            current_time = time.time()
             tuner_table.putNumber("Heartbeat", current_time)
+            self._last_heartbeat_time = current_time
             logger.debug(f"Published heartbeat: {current_time}")
         except Exception as e:
             logger.error(f"Error publishing heartbeat: {e}")
