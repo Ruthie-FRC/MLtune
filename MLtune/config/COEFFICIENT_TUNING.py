@@ -110,7 +110,7 @@ COEFFICIENTS = {
         "initial_step_size": 0.001,    # Size of first adjustment
         "step_decay_rate": 0.9,        # How fast adjustments shrink
         "is_integer": False,           # Allow decimal values
-        "nt_key": "/Tuning/FiringSolver/DragCoefficient",
+        "nt_key": "DragCoefficient",
         "description": "Air resistance coefficient - affects trajectory curvature",
         
         # LOCAL AUTOTUNE OVERRIDE
@@ -142,7 +142,7 @@ COEFFICIENTS = {
         "initial_step_size": 0.05,
         "step_decay_rate": 0.9,
         "is_integer": False,
-        "nt_key": "/Tuning/FiringSolver/AirDensity",
+        "nt_key": "AirDensity",
         "description": "Air density (kg/m³) - typically constant at 1.225",
         
         # Local autotune override
@@ -171,7 +171,7 @@ COEFFICIENTS = {
         "initial_step_size": 5,        # Adjust by 5 iterations at a time
         "step_decay_rate": 0.85,
         "is_integer": True,            # Must be whole number
-        "nt_key": "/Tuning/FiringSolver/VelocityIterations",
+        "nt_key": "VelocityIterations",
         "description": "Solver iterations for velocity - more = accurate but slower",
         
         # Local autotune override
@@ -200,7 +200,7 @@ COEFFICIENTS = {
         "initial_step_size": 5,        # Adjust by 5 iterations at a time
         "step_decay_rate": 0.85,
         "is_integer": True,            # Must be whole number
-        "nt_key": "/Tuning/FiringSolver/AngleIterations",
+        "nt_key": "AngleIterations",
         "description": "Solver iterations for angle - more = accurate but slower",
         
         # Local autotune override
@@ -230,7 +230,7 @@ COEFFICIENTS = {
         "initial_step_size": 0.005,
         "step_decay_rate": 0.9,
         "is_integer": False,
-        "nt_key": "/Tuning/FiringSolver/VelocityTolerance",
+        "nt_key": "VelocityTolerance",
         "description": "Velocity convergence tolerance (m/s) - smaller = more precise",
         
         # Local autotune override
@@ -260,7 +260,7 @@ COEFFICIENTS = {
         "initial_step_size": 0.0001,
         "step_decay_rate": 0.9,
         "is_integer": False,
-        "nt_key": "/Tuning/FiringSolver/AngleTolerance",
+        "nt_key": "AngleTolerance",
         "description": "Angle convergence tolerance (rad) - smaller = more precise",
         
         # Local autotune override
@@ -280,6 +280,11 @@ COEFFICIENTS = {
     # Height of the projectile launch point above the ground.
     # This is a physical measurement that should be accurate from the start.
     # Minor tuning may help compensate for measurement errors.
+    #
+    # NOTE: To tune LaunchHeight, you must add a LoggedTunableNumber in Java:
+    #   private static LoggedTunableNumber launchHeight = 
+    #       new LoggedTunableNumber("LaunchHeight", 0.8);
+    # Then pass launchHeight.get() to the calculate() method instead of a constant.
     # ----------------------------------------------------------------------------
     "kLaunchHeight": {
         "enabled": True,
@@ -289,7 +294,7 @@ COEFFICIENTS = {
         "initial_step_size": 0.02,     # Small adjustments for physical parameter
         "step_decay_rate": 0.9,
         "is_integer": False,
-        "nt_key": "/Tuning/FiringSolver/LaunchHeight",
+        "nt_key": "LaunchHeight",
         "description": "Launch height above ground (m) - physical measurement",
         
         # Local autotune override
