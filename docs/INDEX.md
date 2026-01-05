@@ -19,3 +19,4 @@ All documentation for MLtune is organized in this folder.
 ## Developer Documentation
 
 - [Contributing](CONTRIBUTING.md) - Development guide
+- [Performance Optimizations](PERFORMANCE_OPTIMIZATIONS.md) - Performance improvements and best practices
