@@ -235,6 +235,8 @@ class BayesianTunerCoordinator:
         logger.info("Tuning loop started")
         
         update_period = 1.0 / self.config.TUNER_UPDATE_RATE_HZ
+        # Use longer sleep when paused to reduce CPU usage
+        paused_sleep_period = 1.0
         
         while self.running:
             try:
@@ -248,7 +250,8 @@ class BayesianTunerCoordinator:
                         self.runtime_enabled,
                         paused=not self.runtime_enabled or self.nt_interface.is_match_mode()
                     )
-                    time.sleep(1.0)
+                    # Use longer sleep when paused to reduce CPU usage
+                    time.sleep(paused_sleep_period)
                     continue
                 
                 # ── MANUAL COEFFICIENT ADJUSTMENT ──
@@ -292,7 +295,8 @@ class BayesianTunerCoordinator:
                 
             except Exception as e:
                 logger.error(f"Error in tuning loop: {e}", exc_info=True)
-                time.sleep(1.0)
+                # Use longer sleep on error to avoid rapid error loops
+                time.sleep(paused_sleep_period)
         
         logger.info("Tuning loop ended")
     
