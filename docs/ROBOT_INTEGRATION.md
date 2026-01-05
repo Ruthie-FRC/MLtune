@@ -2,21 +2,15 @@
 
 ## Overview
 
-Integration requires copying Java files from the `java-integration/` directory into your robot project. These files provide the NetworkTables interface required for communication with the tuning system.
+Copy Java files from `java-integration/` to your robot project for NetworkTables communication with the tuner.
 
 ## Required Files
 
-**TunerInterface.java**
-- Manages NetworkTables communication
-- Logs shot data (distance, angle, hit/miss)
-- Receives coefficient updates from tuner
+**TunerInterface.java** - NetworkTables communication, reads tuner status and interlocks
 
-**LoggedTunableNumber.java**
-- Wrapper class for tunable parameters
-- Provides NetworkTables integration
-- Logs value changes automatically
+**LoggedTunableNumber.java** - Wraps tunable parameters, publishes to NetworkTables
 
-Additional files (FiringSolutionSolver.java, Constants_Addition.java) are example implementations.
+Example files: FiringSolutionSolver.java, Constants_Addition.java
 
 ## Integration Steps
 
@@ -48,26 +42,24 @@ double value = k1.get();
 
 ### 3. Check Tuner Status (Optional)
 
-If you need to check tuner status or implement shooting interlocks:
+Check tuner status or implement shooting interlocks:
 
 ```java
 // In RobotContainer or subsystem
 private TunerInterface tuner = TunerInterface.getInstance();
 
-// Check if tuner is connected
 if (tuner.isTunerConnected()) {
-    // Tuner is running
+    // Tuner running
 }
 
-// Check if shooting is allowed based on interlocks
 if (tuner.canShoot()) {
-    // Safe to shoot
+    // Interlocks satisfied
 }
 ```
 
 ### 4. Log Shot Results
 
-In your shooter or firing solution subsystem, log shot results after each attempt. See `FiringSolutionSolver.java` for a complete example:
+Log shot results after each attempt. See `FiringSolutionSolver.java` for complete example:
 
 ```java
 public void logShot(boolean hit, double distanceMeters, 
@@ -86,15 +78,14 @@ public void logShot(boolean hit, double distanceMeters,
 
 ## System Behavior
 
-The tuner performs the following operations:
+The tuner:
 - Reads shot data from NetworkTables
-- Applies Bayesian optimization to determine optimal coefficients
-- Publishes updated values to NetworkTables
-- Maintains logs for analysis
+- Applies Bayesian optimization
+- Publishes updated coefficient values to NetworkTables
 
 ## Example Implementation
 
-See `FiringSolutionSolver.java` for a complete example. Here's a simplified version:
+See `FiringSolutionSolver.java` for complete example. Simplified version:
 
 ```java
 public class Shooter extends SubsystemBase {
@@ -155,28 +146,28 @@ The system uses the following NetworkTables hierarchy:
       └── ShotLogged (boolean)
 ```
 
-The interface classes handle NetworkTables interaction automatically.
+Interface classes handle NetworkTables interaction.
 
 ## Recommendations
 
-- Test coefficient updates manually via NetworkTables before enabling automatic tuning
-- Verify shot detection reliability before automated optimization
-- Use wide parameter bounds initially in tuner configuration
-- Collect minimum 10 shots per coefficient for meaningful optimization
-- Preserve working coefficients before experimental tuning sessions
+- Test coefficient updates manually via NetworkTables first
+- Verify shot detection works before enabling auto-tuning
+- Start with wide parameter bounds
+- Collect 10+ shots per coefficient minimum
+- Back up working coefficients before tuning
 
 ## Troubleshooting
 
-**Tuner shows disconnected:**
-- Verify NetworkTables is operational
-- Check team number matches in robot and tuner configurations
+**Tuner disconnected:**
+- Check NetworkTables operational
+- Verify team number matches
 
 **Coefficients not updating:**
-- Verify `TunerEnabled` is set to true in NetworkTables
-- Check tuner application logs
-- Ensure LoggedTunableNumber values are being read with `.get()`
+- Set `TunerEnabled` to true in NetworkTables
+- Check tuner logs
+- Verify LoggedTunableNumber values read with `.get()`
 
 **Shot data not received:**
-- Verify `logShot()` calls are executed
-- Check dashboard for recent shot entries
-- Review driver station logs for errors
+- Verify `logShot()` is called
+- Check dashboard for shot entries
+- Review logs for errors

@@ -1,8 +1,6 @@
 # MLtune
 
-**Machine Learning-based Parameter Tuning for FRC Robots**
-
-MLtune uses Bayesian optimization to automatically tune robot parameters (like shooter coefficients) based on real-world performance data. Instead of manually tweaking values, the system learns optimal parameters from shot attempts during practice or competition.
+Bayesian optimization tuner for FRC robot parameters. Automatically tunes shooter coefficients and other parameters based on performance data collected during practice or competition.
 
 ## Quick Start
 
@@ -15,65 +13,58 @@ scripts\START.bat
 
 **Mac/Linux:**
 ```bash
-chmod +x scripts/START.sh
 scripts/START.sh
 ```
 
-The launcher will automatically set up a virtual environment, install dependencies, and start both the tuner and web dashboard.
+Creates virtual environment, installs dependencies, starts tuner and dashboard.
 
 ### 2. Integrate with Robot
 
-Copy the Java files from `java-integration/` to your robot project. Then use `LoggedTunableNumber` for parameters and log shots with your subsystem:
+Copy files from `java-integration/` to your robot project. Replace constants with `LoggedTunableNumber` and publish shot data to NetworkTables:
 
 ```java
-// In your subsystem (e.g., FiringSolver or Shooter)
 private LoggedTunableNumber kV = new LoggedTunableNumber("Shooter/kV", 0.12);
 
-// Use tunable values in calculations
-double velocity = kV.get() * distance;
-
-// After each shot, log the result
 public void logShot(boolean hit, double distance, double pitch, double velocity, double yaw) {
-    // Publish shot data to NetworkTables for tuner analysis
-    // See FiringSolutionSolver.java for full implementation
+    // Publish to NetworkTables - see FiringSolutionSolver.java
 }
 ```
 
-### 3. Tune Parameters
+### 3. Run
 
-1. Connect to your robot's network
-2. Open the dashboard at http://localhost:8050
-3. Enable tuning and take shots
-4. Let the system optimize parameters automatically
+1. Connect to robot network
+2. Open dashboard: http://localhost:8050
+3. Enable tuning, take shots
+4. System optimizes parameters based on results
 
 ## Features
 
-- **Bayesian Optimization** - Sample-efficient ML algorithm that learns from each shot
-- **Real-time Tuning** - Optimizes parameters during practice or competition
-- **Web Dashboard** - Monitor performance, view history, and control tuning
-- **NetworkTables Integration** - Seamless communication with FRC robot code
-- **Multiple Interfaces** - Desktop GUI and web dashboard for different use cases
+- Bayesian optimization (scikit-optimize)
+- Real-time parameter tuning during practice/competition
+- Web dashboard (Dash/Plotly) for monitoring and control
+- NetworkTables communication with robot
+- Desktop GUI and web interface
 
 ## Documentation
 
-- **[Getting Started](docs/GETTING_STARTED.md)** - Detailed installation and setup
-- **[Usage Guide](docs/USAGE.md)** - Configuration and operation instructions
-- **[Robot Integration](docs/ROBOT_INTEGRATION.md)** - How to integrate with your robot code
-- **[Repository Structure](docs/REPO_STRUCTURE.md)** - Navigate the codebase
-- **[Contributing](docs/CONTRIBUTING.md)** - Development and contribution guide
+- [Getting Started](docs/GETTING_STARTED.md) - Installation and setup
+- [Usage Guide](docs/USAGE.md) - Configuration and operation
+- [Robot Integration](docs/ROBOT_INTEGRATION.md) - Robot code integration
+- [Repository Structure](docs/REPO_STRUCTURE.md) - Codebase navigation
+- [Contributing](docs/CONTRIBUTING.md) - Development guide
 
-## System Requirements
+## Requirements
 
-- Python 3.8 or newer
-- FRC robot with NetworkTables support
-- Network connection to robot (wired or wireless)
+- Python 3.8+
+- FRC robot with NetworkTables
+- Network connection to robot
 
-## How It Works
+## Operation
 
-1. **Data Collection** - Robot logs shot attempts (distance, angle, hit/miss) via NetworkTables
-2. **Optimization** - Bayesian optimizer analyzes data and suggests improved parameters
-3. **Update** - New coefficients are sent back to the robot automatically
-4. **Repeat** - Process continues, learning and improving over time
+1. Robot logs shot data (distance, angle, hit/miss) to NetworkTables
+2. Tuner applies Bayesian optimization to collected data
+3. Updated coefficients published to NetworkTables
+4. Robot reads new values from LoggedTunableNumber instances
 
 ## Repository Structure
 
@@ -88,8 +79,4 @@ MLtune/
 
 ## License
 
-This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
-
-## Support
-
-For questions, issues, or feature requests, please open a GitHub issue.
+GNU General Public License v3.0 - see [LICENSE](LICENSE).
