@@ -164,7 +164,13 @@ class TunerLogger:
             ]
             
             self.csv_writer.writerow(row)
-            self._file_handle.flush()  # Ensure data is written immediately
+            # Reduce I/O overhead: flush only every 10 entries instead of every write
+            if not hasattr(self, '_write_counter'):
+                self._write_counter = 0
+            self._write_counter += 1
+            if self._write_counter >= 10:
+                self._file_handle.flush()
+                self._write_counter = 0
             
             logger.debug(f"Logged shot: {coefficient_name}={coefficient_value:.6f}, hit={shot_data.hit if shot_data else 'N/A'}")
             
@@ -206,6 +212,7 @@ class TunerLogger:
             ]
             
             self.csv_writer.writerow(row)
+            # Flush immediately for events (less frequent than shots)
             self._file_handle.flush()
             
             logger.info(f"Logged event: {event_type} - {message}")
@@ -226,6 +233,9 @@ class TunerLogger:
         """Close the log file."""
         try:
             if hasattr(self, '_file_handle') and self._file_handle:
+                # Ensure final flush before closing
+                if hasattr(self, '_write_counter') and self._write_counter > 0:
+                    self._file_handle.flush()
                 self._file_handle.close()
                 self._file_handle = None  # Mark as closed to prevent double-close
                 logger.info(f"Closed log file: {self.csv_file}")
