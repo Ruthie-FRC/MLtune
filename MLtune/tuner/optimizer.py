@@ -374,21 +374,31 @@ class CoefficientTuner:
         if not self.pending_shots or not self.current_optimizer:
             return
         
+        # Cache pending shots count to avoid repeated len() calls
+        num_shots = len(self.pending_shots)
+        
         # Aggregate shots - use majority vote for hit/miss
-        hits = sum(1 for s in self.pending_shots if s['shot_data'].hit)
-        hit = hits > len(self.pending_shots) / 2
+        # Optimize: single pass through list instead of multiple iterations
+        hits = 0
+        coeff_values = []
+        distances = []
+        for shot in self.pending_shots:
+            if shot['shot_data'].hit:
+                hits += 1
+            coeff_values.append(shot['coefficient_value'])
+            distances.append(shot['shot_data'].distance)
         
-        # Use average coefficient value
-        avg_value = np.mean([s['coefficient_value'] for s in self.pending_shots])
+        hit = hits > num_shots / 2
         
-        # Average distance
-        avg_distance = np.mean([s['shot_data'].distance for s in self.pending_shots])
+        # Use average coefficient value and distance
+        avg_value = np.mean(coeff_values)
+        avg_distance = np.mean(distances)
         
         # Report to optimizer
         additional_data = {
             'distance': avg_distance,
-            'num_shots': len(self.pending_shots),
-            'hit_rate': hits / len(self.pending_shots),
+            'num_shots': num_shots,
+            'hit_rate': hits / num_shots,
         }
         
         self.current_optimizer.report_result(avg_value, hit, additional_data)
