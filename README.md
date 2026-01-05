@@ -13,6 +13,7 @@ scripts\START.bat
 
 **Mac/Linux:**
 ```bash
+chmod +x scripts/START.sh  # First time only
 scripts/START.sh
 ```
 
