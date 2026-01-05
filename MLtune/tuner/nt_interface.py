@@ -567,6 +567,24 @@ class NetworkTablesInterface:
         except Exception as e:
             logger.error(f"Error signaling coefficient update: {e}")
     
+    def signal_shot_logged(self):
+        """
+        Signal that a shot has been logged by the tuner (clears interlock).
+        
+        Sets the ShotLogged flag to true, allowing robot to shoot again
+        if that interlock is enabled. The Java side clears this flag before
+        each shot using clearShotLoggedFlag().
+        """
+        if not self.is_connected():
+            return
+        
+        try:
+            interlock_table = NetworkTables.getTable("/FiringSolver/Interlock")
+            interlock_table.putBoolean("ShotLogged", True)
+            logger.debug("Signaled shot logged")
+        except Exception as e:
+            logger.error(f"Error signaling shot logged: {e}")
+    
     def read_run_optimization_button(self) -> bool:
         """
         Read the "Run Optimization" button state from the dashboard.
@@ -915,6 +933,29 @@ class NetworkTablesInterface:
             logger.debug(f"Tuner status: enabled={enabled}, paused={paused}")
         except Exception as e:
             logger.error(f"Error writing tuner enabled status: {e}")
+    
+    def publish_heartbeat(self):
+        """
+        Publish a heartbeat timestamp to NetworkTables.
+        
+        This allows the Java TunerInterface to detect if the Python tuner
+        is connected and running by checking if the timestamp is recent.
+        
+        The Java side checks if (currentTime - heartbeat) < 5.0 seconds.
+        This method should be called periodically (e.g., every 1-2 seconds).
+        
+        Dashboard Location: /Tuning/BayesianTuner/Heartbeat
+        """
+        if not self.is_connected():
+            return
+        
+        try:
+            tuner_table = NetworkTables.getTable("/Tuning/BayesianTuner")
+            current_time = time.time()
+            tuner_table.putNumber("Heartbeat", current_time)
+            logger.debug(f"Published heartbeat: {current_time}")
+        except Exception as e:
+            logger.error(f"Error publishing heartbeat: {e}")
     
     def initialize_manual_controls(self, coefficients: dict):
         """
