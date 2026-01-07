@@ -167,6 +167,14 @@ def create_top_nav():
                             html.Div("No robot", style={'fontSize': '11px', 'color': 'var(--text-tertiary)'})
                         ])
                     ]),
+                    # Dark mode toggle
+                    dbc.Button(
+                        "🌙 Dark Mode",
+                        id='theme-toggle',
+                        className="btn-secondary",
+                        size="sm",
+                        title="Toggle between light and dark theme"
+                    ),
                 ]
             )
         ]
@@ -1644,14 +1652,39 @@ def toggle_sidebar(n_clicks, current_class):
 @app.callback(
     [Output('app-state', 'data'),
      Output('root-container', 'data-theme')],
-    [Input('update-interval', 'n_intervals')],  # Dummy input to keep callback structure
+    [Input('update-interval', 'n_intervals'),
+     Input('theme-toggle', 'n_clicks')],  # Add theme toggle input
     [State('app-state', 'data')],
     prevent_initial_call=True
 )
-def update_app_state(n_intervals, state):
-    """Update application state."""
-    # Simplified - no mode toggling anymore
-    return state, 'light'  # Always return light theme
+def update_app_state(n_intervals, theme_clicks, state):
+    """Update application state and handle theme toggle."""
+    ctx = callback_context
+    
+    # Check if theme toggle was clicked
+    if ctx.triggered:
+        button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+        if button_id == 'theme-toggle':
+            # Toggle theme
+            current_theme = state.get('theme', 'light')
+            new_theme = 'dark' if current_theme == 'light' else 'light'
+            state['theme'] = new_theme
+            return state, new_theme
+    
+    # Return current theme
+    return state, state.get('theme', 'light')
+
+
+@app.callback(
+    Output('theme-toggle', 'children'),
+    [Input('app-state', 'data')]
+)
+def update_theme_toggle_label(state):
+    """Update the theme toggle button label based on current theme."""
+    if state.get('theme', 'light') == 'light':
+        return "🌙 Dark Mode"
+    else:
+        return "☀️ Light Mode"
 
 
 
