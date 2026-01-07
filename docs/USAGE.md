@@ -57,16 +57,6 @@ server_ip = 10.12.34.2
 - Automatic advancement on success
 - Set both toggles to `True`
 
-## Keyboard Shortcuts
-
-The system registers global hotkeys (requires administrator/root privileges on some systems):
-
-- `Ctrl+Alt+R` - Trigger optimization
-- `Ctrl+Alt+N` - Advance to next coefficient
-- `Ctrl+Alt+S` - Toggle tuning
-
-Note: Keyboard support varies by platform. Use dashboard controls if hotkeys are unavailable.
-
 ## Web Dashboard
 
 Access the dashboard at http://localhost:8050.
@@ -91,15 +81,6 @@ The dashboard updates automatically when new data is received from the robot.
 - Verify robot is powered and operational
 - Confirm team number in configuration
 - Check network connection to robot
-
-### Hotkey Failures
-
-**Symptom**: Keyboard shortcuts not responding
-
-**Solutions**:
-- Run application with elevated privileges
-- Use dashboard controls as alternative
-- Note: The `keyboard` library has platform-specific limitations
 
 ### Import Errors
 

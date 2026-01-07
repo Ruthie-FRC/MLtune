@@ -24,7 +24,6 @@ This dashboard provides complete control over the tuning system with:
 - Two-level mode system (Normal/Advanced)
 - Dark/Light theme toggle
 - Collapsible sidebar navigation
-- Keyboard shortcuts
 - Real-time monitoring
 - Advanced ML algorithm selection
 - Danger Zone for sensitive operations
@@ -1436,71 +1435,14 @@ def create_logs_view():
 
 
 def create_help_view():
-    """Create the help and keyboard shortcuts view."""
-    shortcuts = [
-        ('Ctrl+S', 'Start Tuner'),
-        ('Ctrl+Q', 'Stop Tuner'),
-        ('Ctrl+O', 'Run Optimization'),
-        ('Ctrl+K', 'Skip Coefficient'),
-        ('Ctrl+←', 'Previous Coefficient'),
-        ('Ctrl+→', 'Next Coefficient'),
-        ('Ctrl+↑', 'Fine Tune Up'),
-        ('Ctrl+↓', 'Fine Tune Down'),
-        ('Ctrl+H', 'Toggle Sidebar'),
-        ('Ctrl+M', 'Toggle Mode (Normal/Advanced)'),
-        ('Ctrl+Shift+M', 'Toggle More Features'),
-        ('?', 'Show All Shortcuts'),
-    ]
-    
+    """Create the help view."""
     return html.Div([
-        html.Div(className="card", children=[
-            html.Div("Take a Tour", className="card-header"),
-            html.P("New to the dashboard? Take an interactive tour to learn about all the features!"),
-            dbc.Button(
-                "Start Interactive Tour",
-                id='start-tour-button',
-                className="btn-primary",
-                size="lg",
-                style={'width': '100%', 'marginBottom': '10px'}
-            ),
-            html.P([
-                "The tour will guide you through:",
-                html.Ul([
-                    html.Li("Quick Actions and controls"),
-                    html.Li("All 7 coefficient sliders"),
-                    html.Li("Graphs and visualizations"),
-                    html.Li("Settings and configuration"),
-                    html.Li("Robot status monitoring"),
-                    html.Li("Advanced features"),
-                ], style={'marginTop': '10px', 'marginBottom': '0'})
-            ], style={'fontSize': '14px', 'color': 'var(--text-secondary)', 'marginBottom': '0'})
-        ]),
-        
-        html.Div(className="card", children=[
-            html.Div("Keyboard Shortcuts", className="card-header"),
-            html.Table(className="table-github", children=[
-                html.Thead([
-                    html.Tr([
-                        html.Th("Shortcut"),
-                        html.Th("Action")
-                    ])
-                ]),
-                html.Tbody([
-                    html.Tr([
-                        html.Td(html.Code(shortcut)),
-                        html.Td(action)
-                    ]) for shortcut, action in shortcuts
-                ])
-            ])
-        ]),
-        
         html.Div(className="card", children=[
             html.Div("About", className="card-header"),
             html.P("MLtune Dashboard v1.0"),
             html.P("Comprehensive browser-based control system for the Bayesian Optimization Tuner."),
-            html.P("Features: GitHub-inspired design, two-level mode system, keyboard shortcuts, and complete runtime control over all tuner settings.")
+            html.P("Features: GitHub-inspired design, two-level mode system, and complete runtime control over all tuner settings.")
         ]),
-        
     ])
 
 
@@ -1553,17 +1495,6 @@ app.layout = html.Div(
                 html.Span(id='status-bar-success', children="0.0%")
             ]),
         ]),
-        
-        # Hidden div for keyboard shortcut modal
-        dbc.Modal(
-            id='shortcuts-modal',
-            is_open=False,
-            children=[
-                dbc.ModalHeader(dbc.ModalTitle("Keyboard Shortcuts"), close_button=True),
-                dbc.ModalBody(create_help_view()),
-            ],
-            size='lg'
-        )
     ]
 )
 
@@ -1684,103 +1615,6 @@ def update_theme_toggle_label(state):
     else:
         return "☀️ Light Mode"
 
-
-
-
-@app.callback(
-    Output('main-content', 'children', allow_duplicate=True),
-    [Input('start-tour-button', 'n_clicks')],
-    [State('app-state', 'data')],
-    prevent_initial_call=True
-)
-def start_tour(n_clicks, state):
-    """Start the interactive tour of the dashboard."""
-    if not n_clicks:
-        return create_help_view()
-    
-    # Create tour overlay with step-by-step guide
-    tour_steps = [
-        {
-            'title': 'Welcome to MLtune Dashboard!',
-            'description': 'This interactive tour will show you all the powerful features at your fingertips. Click Next to continue.',
-            'target': None
-        },
-        {
-            'title': 'Dashboard Overview',
-            'description': 'The main dashboard gives you quick access to start/stop tuning, run optimizations, and navigate coefficients.',
-            'target': 'dashboard'
-        },
-        {
-            'title': 'All 7 Coefficients',
-            'description': 'Access interactive sliders for all 7 parameters: Drag Coefficient, Gravity, Shot Height, Target Height, Shooter Angle, RPM, and Exit Velocity.',
-            'target': 'coefficients'
-        },
-        {
-            'title': 'Graphs & Analytics',
-            'description': 'Visualize success rates, coefficient history, optimization progress, and shot distributions with toggleable graphs.',
-            'target': 'graphs'
-        },
-        {
-            'title': 'Complete Settings Control',
-            'description': 'Adjust ALL tuner settings in real-time: auto-optimize, auto-advance, ML algorithms, NetworkTables config, logging, and more!',
-            'target': 'settings'
-        },
-        {
-            'title': 'Robot Status Monitoring',
-            'description': 'Monitor robot vitals: battery, CPU, memory, CAN utilization, and view robot-specific logs and graphs.',
-            'target': 'robot-status'
-        },
-        {
-            'title': 'Advanced Mode',
-            'description': 'Switch to Advanced mode to access 11 ML algorithms, 6 hybrid strategies, and experimental features.',
-            'target': 'mode-toggle'
-        },
-        {
-            'title': 'Tour Complete!',
-            'description': 'You\'re all set! Explore the dashboard and use keyboard shortcuts (press ?) for faster control. Click Dashboard to return.',
-            'target': None
-        }
-    ]
-    
-    return html.Div([
-        html.Div(className="tour-overlay", style={
-            'position': 'fixed',
-            'top': '0',
-            'left': '0',
-            'width': '100%',
-            'height': '100%',
-            'backgroundColor': 'rgba(0,0,0,0.7)',
-            'zIndex': '2000',
-            'display': 'flex',
-            'alignItems': 'center',
-            'justifyContent': 'center'
-        }, children=[
-            html.Div(className="tour-card", style={
-                'backgroundColor': 'var(--bg-primary)',
-                'borderRadius': '8px',
-                'padding': '30px',
-                'maxWidth': '500px',
-                'boxShadow': '0 10px 40px rgba(0,0,0,0.3)'
-            }, children=[
-                html.H2("Welcome to the Tour!", style={'color': 'var(--accent-primary)', 'marginBottom': '20px'}),
-                html.P("The interactive tour will guide you through all dashboard features step-by-step.", style={'marginBottom': '20px'}),
-                html.P("Features you'll discover:", style={'fontWeight': 'bold', 'marginBottom': '10px'}),
-                html.Ul([
-                    html.Li("Quick Actions and main controls"),
-                    html.Li("All 7 coefficient sliders with fine tuning"),
-                    html.Li("Graphs and data visualizations"),
-                    html.Li("Complete settings panel with 60+ options"),
-                    html.Li("Robot status monitoring"),
-                    html.Li("Advanced ML features"),
-                    html.Li("Keyboard shortcuts"),
-                ]),
-                html.Div(style={'marginTop': '30px', 'display': 'flex', 'gap': '10px'}, children=[
-                    dbc.Button("Start Tour", className="btn-primary", size="lg", style={'flex': '1'}),
-                    dbc.Button("Skip Tour", className="btn-secondary", size="lg", style={'flex': '1'}),
-                ])
-            ])
-        ])
-    ])
 
 
 # ============================================================================
@@ -2137,6 +1971,45 @@ def handle_pin_coefficient_buttons(clicks, slider_values, state):
 
 
 @app.callback(
+    Output('pinned-values-list', 'children'),
+    [Input('app-state', 'data')],
+    prevent_initial_call=False
+)
+def update_pinned_values_display(state):
+    """Update the pinned values display when coefficients are starred."""
+    pinned_values = state.get('pinned_values', {})
+    
+    if not pinned_values:
+        return [html.P("No pinned values yet. Click ⭐ on any coefficient to pin it.", 
+                      style={'fontStyle': 'italic', 'color': 'var(--text-secondary)'})]
+    
+    # Create a list of pinned value cards
+    pinned_cards = []
+    for coeff_name, pin_data in pinned_values.items():
+        pinned_cards.append(
+            html.Div(
+                className="card",
+                style={'marginBottom': '8px', 'padding': '12px'},
+                children=[
+                    html.Div(style={'display': 'flex', 'justifyContent': 'space-between', 'alignItems': 'center'}, children=[
+                        html.Div([
+                            html.Span("⭐ ", style={'fontSize': '16px'}),
+                            html.Span(coeff_name, style={'fontWeight': 'bold', 'marginRight': '8px'}),
+                            html.Span(f"= {pin_data['value']}", style={'color': 'var(--accent-primary)', 'fontWeight': 'bold'}),
+                        ]),
+                        html.Div([
+                            html.Small(f"Pinned at {pin_data['timestamp']}", 
+                                     style={'fontSize': '11px', 'color': 'var(--text-secondary)'})
+                        ])
+                    ])
+                ]
+            )
+        )
+    
+    return pinned_cards
+
+
+@app.callback(
     Output('app-state', 'data', allow_duplicate=True),
     [Input('export-graphs-btn', 'n_clicks'),
      Input('refresh-graphs-btn', 'n_clicks'),
@@ -2489,21 +2362,6 @@ app.clientside_callback(
     [Input('update-interval', 'n_intervals')],
     prevent_initial_call=True
 )
-
-
-# Simple callback to ensure the modal can be closed (the close button should work automatically with is_open=False)
-# This is a placeholder - keyboard shortcuts would require clientside callbacks
-@app.callback(
-    Output('shortcuts-modal', 'is_open'),
-    [Input({'type': 'nav-btn', 'index': 'help'}, 'n_clicks')],
-    [State('shortcuts-modal', 'is_open')],
-    prevent_initial_call=True
-)
-def toggle_shortcuts_modal(n_clicks, is_open):
-    """Toggle the shortcuts modal when help button is clicked."""
-    if n_clicks:
-        return not is_open
-    return is_open
 
 
 @app.callback(
