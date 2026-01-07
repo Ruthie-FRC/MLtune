@@ -1630,8 +1630,6 @@ def update_view(clicks, sidebar_class):
     nav_classes = ['sidebar-menu-item active' if idx == view else 'sidebar-menu-item' for idx in nav_indices]
 
     return content, class_name, nav_classes
-    
-    return content, class_name
 
 
 @app.callback(
@@ -2094,6 +2092,46 @@ def handle_jump_to_buttons(clicks, state):
             print(f"⤵️ Jumped to {coeff_name}")
         except (json.JSONDecodeError, KeyError, TypeError):
             pass
+    
+    return state
+
+
+@app.callback(
+    Output('app-state', 'data', allow_duplicate=True),
+    [Input({'type': 'pin-coeff-btn', 'index': ALL}, 'n_clicks')],
+    [State({'type': 'coeff-slider', 'index': ALL}, 'value'),
+     State('app-state', 'data')],
+    prevent_initial_call=True
+)
+def handle_pin_coefficient_buttons(clicks, slider_values, state):
+    """Handle pin coefficient star buttons to save current values."""
+    ctx = callback_context
+    if not ctx.triggered or not any(clicks):
+        return state
+    
+    triggered_id = ctx.triggered[0]['prop_id'].split('.')[0]
+    if triggered_id:
+        try:
+            button_data = json.loads(triggered_id)
+            coeff_name = button_data.get('index')
+            
+            # Find the index of this coefficient in COEFFICIENT_NAMES
+            if coeff_name in COEFFICIENT_NAMES:
+                coeff_index = COEFFICIENT_NAMES.index(coeff_name)
+                current_value = slider_values[coeff_index]
+                
+                # Store pinned value in state
+                if 'pinned_values' not in state:
+                    state['pinned_values'] = {}
+                
+                state['pinned_values'][coeff_name] = {
+                    'value': current_value,
+                    'timestamp': datetime.now().strftime('%I:%M:%S %p')
+                }
+                
+                print(f"📌 Pinned {coeff_name} = {current_value}")
+        except (json.JSONDecodeError, KeyError, TypeError, IndexError) as e:
+            print(f"Error pinning coefficient: {e}")
     
     return state
 
