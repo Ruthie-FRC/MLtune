@@ -331,7 +331,9 @@ def create_coefficients_view():
                 html.Div(style={'display': 'flex', 'justifyContent': 'space-between', 'alignItems': 'center', 'marginBottom': '12px'}, children=[
                     html.Div([
                         html.Span(coeff, style={'fontWeight': 'bold', 'fontSize': '16px'}),
-                        html.Span(f" (Current: {params['default']})", style={'color': 'var(--text-secondary)', 'fontSize': '14px', 'marginLeft': '8px'}),
+                        html.Span(f" (Current: ", style={'color': 'var(--text-secondary)', 'fontSize': '14px', 'marginLeft': '8px'}),
+                        html.Span(f"{params['default']}", id={'type': 'coeff-current-display', 'index': coeff}, style={'color': 'var(--text-secondary)', 'fontSize': '14px'}),
+                        html.Span(")", style={'color': 'var(--text-secondary)', 'fontSize': '14px'}),
                     ]),
                     html.Div(style={'display': 'flex', 'gap': '4px'}, children=[
                         dbc.Button("⭐", id={'type': 'pin-coeff-btn', 'index': coeff}, size="sm", className="btn-secondary", title="Pin this value"),
@@ -1566,8 +1568,9 @@ app.layout = html.Div(
         # Hidden div for keyboard shortcut modal
         dbc.Modal(
             id='shortcuts-modal',
+            is_open=False,
             children=[
-                dbc.ModalHeader("Keyboard Shortcuts"),
+                dbc.ModalHeader(dbc.ModalTitle("Keyboard Shortcuts"), close_button=True),
                 dbc.ModalBody(create_help_view()),
             ],
             size='lg'
@@ -2432,6 +2435,7 @@ def update_dashboard_displays(state):
 
 @app.callback(
     [Output('status-bar-time', 'children'),
+     Output('status-bar-date', 'children'),
      Output('status-bar-shots', 'children'),
      Output('status-bar-success', 'children')],
     [Input('update-interval', 'n_intervals')],
@@ -2439,11 +2443,87 @@ def update_dashboard_displays(state):
 )
 def update_status_bar(n_intervals, state):
     """Update the status bar with current time and stats."""
-    current_time = datetime.now().strftime('%I:%M:%S %p')
+    # Use JavaScript on client side for accurate local time
+    # For now, we'll return empty and handle with clientside callback
     shots = str(state.get('shot_count', 0))
     success = f"{state.get('success_rate', 0.0):.1%}"
     
-    return current_time, shots, success
+    # Return placeholders for time/date - will be updated by clientside callback
+    return no_update, no_update, shots, success
+
+
+# Clientside callback to update time/date with user's local timezone
+app.clientside_callback(
+    """
+    function(n_intervals) {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+        const dateStr = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+        return [timeStr, dateStr];
+    }
+    """,
+    [Output('status-bar-time', 'children', allow_duplicate=True),
+     Output('status-bar-date', 'children', allow_duplicate=True)],
+    [Input('update-interval', 'n_intervals')],
+    prevent_initial_call=True
+)
+
+
+# Simple callback to ensure the modal can be closed (the close button should work automatically with is_open=False)
+# This is a placeholder - keyboard shortcuts would require clientside callbacks
+@app.callback(
+    Output('shortcuts-modal', 'is_open'),
+    [Input({'type': 'nav-btn', 'index': 'help'}, 'n_clicks')],
+    [State('shortcuts-modal', 'is_open')],
+    prevent_initial_call=True
+)
+def toggle_shortcuts_modal(n_clicks, is_open):
+    """Toggle the shortcuts modal when help button is clicked."""
+    if n_clicks:
+        return not is_open
+    return is_open
+
+
+@app.callback(
+    [Output({'type': 'coeff-current-display', 'index': 'kDragCoefficient'}, 'children'),
+     Output({'type': 'coeff-current-display', 'index': 'kGravity'}, 'children'),
+     Output({'type': 'coeff-current-display', 'index': 'kShotHeight'}, 'children'),
+     Output({'type': 'coeff-current-display', 'index': 'kTargetHeight'}, 'children'),
+     Output({'type': 'coeff-current-display', 'index': 'kShooterAngle'}, 'children'),
+     Output({'type': 'coeff-current-display', 'index': 'kShooterRPM'}, 'children'),
+     Output({'type': 'coeff-current-display', 'index': 'kExitVelocity'}, 'children')],
+    [Input({'type': 'coeff-slider', 'index': 'kDragCoefficient'}, 'value'),
+     Input({'type': 'coeff-slider', 'index': 'kGravity'}, 'value'),
+     Input({'type': 'coeff-slider', 'index': 'kShotHeight'}, 'value'),
+     Input({'type': 'coeff-slider', 'index': 'kTargetHeight'}, 'value'),
+     Input({'type': 'coeff-slider', 'index': 'kShooterAngle'}, 'value'),
+     Input({'type': 'coeff-slider', 'index': 'kShooterRPM'}, 'value'),
+     Input({'type': 'coeff-slider', 'index': 'kExitVelocity'}, 'value')],
+    prevent_initial_call=False
+)
+def update_coefficient_current_displays(drag_val, grav_val, shot_val, target_val, angle_val, rpm_val, velocity_val):
+    """Update the 'Current:' value displays in coefficient headers when sliders change."""
+    # Format each value appropriately based on its type
+    def format_value(val, coeff_name):
+        config = COEFFICIENT_CONFIG.get(coeff_name, {})
+        step = config.get('step', 0.1)
+        # If step is very small, show more decimal places
+        if step < 0.01:
+            return f"{val:.4f}"
+        elif step < 1:
+            return f"{val:.2f}"
+        else:
+            return f"{val:.0f}"
+    
+    return (
+        format_value(drag_val, 'kDragCoefficient'),
+        format_value(grav_val, 'kGravity'),
+        format_value(shot_val, 'kShotHeight'),
+        format_value(target_val, 'kTargetHeight'),
+        format_value(angle_val, 'kShooterAngle'),
+        format_value(rpm_val, 'kShooterRPM'),
+        format_value(velocity_val, 'kExitVelocity')
+    )
 
 
 if __name__ == '__main__':
