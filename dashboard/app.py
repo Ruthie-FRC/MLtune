@@ -289,11 +289,7 @@ def create_dashboard_view():
                     html.P("Adjust current coefficient in small increments", style={'fontSize': '14px', 'color': 'var(--text-secondary)', 'marginBottom': '12px'}),
                     html.Div(style={'display': 'flex', 'flexDirection': 'column', 'gap': '8px', 'alignItems': 'center'}, children=[
                         dbc.Button("⬆ Up (Ctrl+↑)", id='fine-tune-up-btn', className="btn-secondary", style={'width': '160px', 'padding': '8px'}),
-                        html.Div(style={'display': 'flex', 'gap': '8px', 'justifyContent': 'center', 'width': '100%'}, children=[
-                            dbc.Button("← Left", id='fine-tune-left-btn', className="btn-secondary", style={'padding': '8px 12px'}),
-                            dbc.Button("Reset", id='fine-tune-reset-btn', className="btn-secondary", style={'padding': '8px 16px'}),
-                            dbc.Button("Right ➡", id='fine-tune-right-btn', className="btn-secondary", style={'padding': '8px 12px'}),
-                        ]),
+                        dbc.Button("Reset", id='fine-tune-reset-btn', className="btn-secondary", style={'width': '160px', 'padding': '8px'}),
                         dbc.Button("⬇ Down (Ctrl+↓)", id='fine-tune-down-btn', className="btn-secondary", style={'width': '160px', 'padding': '8px'}),
                     ])
                 ]),
@@ -1862,13 +1858,11 @@ def handle_coefficient_navigation(prev_clicks, next_clicks, state):
     Output('app-state', 'data', allow_duplicate=True),
     [Input('fine-tune-up-btn', 'n_clicks'),
      Input('fine-tune-down-btn', 'n_clicks'),
-     Input('fine-tune-left-btn', 'n_clicks'),
-     Input('fine-tune-right-btn', 'n_clicks'),
      Input('fine-tune-reset-btn', 'n_clicks')],
     [State('app-state', 'data')],
     prevent_initial_call=True
 )
-def handle_fine_tuning_buttons(up_clicks, down_clicks, left_clicks, right_clicks, reset_clicks, state):
+def handle_fine_tuning_buttons(up_clicks, down_clicks, reset_clicks, state):
     """Handle fine tuning control buttons."""
     ctx = callback_context
     if not ctx.triggered:
@@ -1880,10 +1874,6 @@ def handle_fine_tuning_buttons(up_clicks, down_clicks, left_clicks, right_clicks
         print("⬆️ Fine Tune Up")
     elif button_id == 'fine-tune-down-btn':
         print("⬇️ Fine Tune Down")
-    elif button_id == 'fine-tune-left-btn':
-        print("⬅️ Fine Tune Left")
-    elif button_id == 'fine-tune-right-btn':
-        print("➡️ Fine Tune Right")
     elif button_id == 'fine-tune-reset-btn':
         print("🔄 Fine Tune Reset")
     
@@ -1987,20 +1977,35 @@ def handle_coefficient_sliders(slider_values, state):
 
 
 @app.callback(
-    Output('app-state', 'data', allow_duplicate=True),
+    [Output({'type': 'coeff-slider', 'index': 'kDragCoefficient'}, 'value', allow_duplicate=True),
+     Output({'type': 'coeff-slider', 'index': 'kGravity'}, 'value', allow_duplicate=True),
+     Output({'type': 'coeff-slider', 'index': 'kShotHeight'}, 'value', allow_duplicate=True),
+     Output({'type': 'coeff-slider', 'index': 'kTargetHeight'}, 'value', allow_duplicate=True),
+     Output({'type': 'coeff-slider', 'index': 'kShooterAngle'}, 'value', allow_duplicate=True),
+     Output({'type': 'coeff-slider', 'index': 'kShooterRPM'}, 'value', allow_duplicate=True),
+     Output({'type': 'coeff-slider', 'index': 'kExitVelocity'}, 'value', allow_duplicate=True),
+     Output('app-state', 'data', allow_duplicate=True)],
     [Input({'type': 'fine-inc', 'index': ALL}, 'n_clicks'),
      Input({'type': 'fine-dec', 'index': ALL}, 'n_clicks'),
      Input({'type': 'fine-inc-large', 'index': ALL}, 'n_clicks'),
      Input({'type': 'fine-dec-large', 'index': ALL}, 'n_clicks'),
      Input({'type': 'reset-coeff', 'index': ALL}, 'n_clicks')],
-    [State('app-state', 'data')],
+    [State({'type': 'coeff-slider', 'index': 'kDragCoefficient'}, 'value'),
+     State({'type': 'coeff-slider', 'index': 'kGravity'}, 'value'),
+     State({'type': 'coeff-slider', 'index': 'kShotHeight'}, 'value'),
+     State({'type': 'coeff-slider', 'index': 'kTargetHeight'}, 'value'),
+     State({'type': 'coeff-slider', 'index': 'kShooterAngle'}, 'value'),
+     State({'type': 'coeff-slider', 'index': 'kShooterRPM'}, 'value'),
+     State({'type': 'coeff-slider', 'index': 'kExitVelocity'}, 'value'),
+     State('app-state', 'data')],
     prevent_initial_call=True
 )
-def handle_coefficient_fine_adjustments(inc_clicks, dec_clicks, inc_large_clicks, dec_large_clicks, reset_clicks, state):
+def handle_coefficient_fine_adjustments(inc_clicks, dec_clicks, inc_large_clicks, dec_large_clicks, reset_clicks, 
+                                        drag_val, grav_val, shot_val, target_val, angle_val, rpm_val, velocity_val, state):
     """Handle fine adjustment buttons for individual coefficients."""
     ctx = callback_context
     if not ctx.triggered:
-        return state
+        return no_update
 
     triggered_id = ctx.triggered[0]['prop_id'].split('.')[0]
 
@@ -2009,13 +2014,21 @@ def handle_coefficient_fine_adjustments(inc_clicks, dec_clicks, inc_large_clicks
         button_data = json.loads(triggered_id)
         coeff_name = button_data.get('index')
     except (json.JSONDecodeError, KeyError, TypeError):
-        return state
+        return no_update
 
     # Validate coefficient name before using it
     if not coeff_name:
-        return state
-    # Determine current value from stored state or defaults
-    current_value = state.get('coefficient_values', {}).get(coeff_name, COEFFICIENT_DEFAULTS.get(coeff_name, 0))
+        return no_update
+    
+    # Get current values in order
+    current_slider_values = [drag_val, grav_val, shot_val, target_val, angle_val, rpm_val, velocity_val]
+    
+    # Find the index of this coefficient
+    if coeff_name not in COEFFICIENT_NAMES:
+        return no_update
+    
+    coeff_index = COEFFICIENT_NAMES.index(coeff_name)
+    current_value = current_slider_values[coeff_index]
     
     # Use module-level configuration constants
     coeff_config = COEFFICIENT_CONFIG.get(coeff_name, {'step': 0.1, 'min': 0, 'max': 100})
@@ -2043,23 +2056,22 @@ def handle_coefficient_fine_adjustments(inc_clicks, dec_clicks, inc_large_clicks
         elif button_type == 'reset-coeff':
             new_value = COEFFICIENT_DEFAULTS.get(coeff_name, current_value)
             print(f"🔄 Reset {coeff_name}: {current_value:.4f} → {new_value:.4f} (default)")
-            # Remove from state overrides when resetting to default
-            if 'coefficient_values' in state and coeff_name in state['coefficient_values']:
-                del state['coefficient_values'][coeff_name]
-            # Store the new value in state
-            state['coefficient_values'][coeff_name] = new_value
-            return state
-
-        # Update state with new value for all non-reset operations
+        
+        # Update the specific coefficient value
+        new_slider_values = current_slider_values.copy()
+        new_slider_values[coeff_index] = new_value
+        
+        # Store the new value in state
         if 'coefficient_values' not in state:
             state['coefficient_values'] = {}
         state['coefficient_values'][coeff_name] = new_value
-
-        return state
-
-    except (KeyError, TypeError) as e:
-        print(f"Error in fine adjustment: {e}")
-        return state
+        
+        # Return all slider values plus state
+        return new_slider_values + [state]
+        
+    except Exception as e:
+        print(f"Error in coefficient fine adjustment: {e}")
+        return no_update
 
 
 @app.callback(
