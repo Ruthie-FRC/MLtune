@@ -104,7 +104,7 @@ The dashboard updates automatically when new data is received from the robot.
 - Begin with wide parameter bounds, then narrow based on initial results
 - Collect 10-20 shots per coefficient for reliable optimization
 - Monitor application logs for system status
-- Dashboard provides more reliable control than hotkeys on most platforms
+- Use the dashboard for all control operations
 - Back up optimized coefficients before parameter resets
 
 ## Logging

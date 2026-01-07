@@ -324,7 +324,7 @@ def create_coefficients_view():
                         html.Span(")", style={'color': 'var(--text-secondary)', 'fontSize': '14px'}),
                     ]),
                     html.Div(style={'display': 'flex', 'gap': '4px'}, children=[
-                        dbc.Button("⭐", id={'type': 'pin-coeff-btn', 'index': coeff}, size="sm", className="btn-secondary", title="Pin this value"),
+                        dbc.Button("📌", id={'type': 'pin-coeff-btn', 'index': coeff}, size="sm", className="btn-secondary", title="Pin this value"),
                         dbc.Button("Jump to", id={'type': 'jump-to-btn', 'index': coeff}, size="sm", className="btn-primary")
                     ])
                 ]),
@@ -389,7 +389,7 @@ def create_coefficients_view():
             html.Div("📌 Pinned Values", className="card-header"),
             html.P("Save and quickly restore coefficient sets", style={'color': 'var(--text-secondary)'}),
             html.Div(id='pinned-values-list', children=[
-                html.P("No pinned values yet. Click ⭐ on any coefficient to pin it.", style={'fontStyle': 'italic', 'color': 'var(--text-secondary)'})
+                html.P("No pinned values yet. Click 📌 on any coefficient to pin it.", style={'fontStyle': 'italic', 'color': 'var(--text-secondary)'})
             ])
         ]),
         
@@ -1980,7 +1980,7 @@ def update_pinned_values_display(state):
     pinned_values = state.get('pinned_values', {})
     
     if not pinned_values:
-        return [html.P("No pinned values yet. Click ⭐ on any coefficient to pin it.", 
+        return [html.P("No pinned values yet. Click 📌 on any coefficient to pin it.", 
                       style={'fontStyle': 'italic', 'color': 'var(--text-secondary)'})]
     
     # Create a list of pinned value cards
@@ -1993,7 +1993,7 @@ def update_pinned_values_display(state):
                 children=[
                     html.Div(style={'display': 'flex', 'justifyContent': 'space-between', 'alignItems': 'center'}, children=[
                         html.Div([
-                            html.Span("⭐ ", style={'fontSize': '16px'}),
+                            html.Span("📌 ", style={'fontSize': '16px'}),
                             html.Span(coeff_name, style={'fontWeight': 'bold', 'marginRight': '8px'}),
                             html.Span(f"= {pin_data['value']}", style={'color': 'var(--accent-primary)', 'fontWeight': 'bold'}),
                         ]),
