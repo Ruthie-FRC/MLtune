@@ -1938,7 +1938,7 @@ def handle_jump_to_buttons(clicks, state):
     prevent_initial_call=True
 )
 def handle_pin_coefficient_buttons(clicks, slider_values, state):
-    """Handle pin coefficient star buttons to save current values."""
+    """Handle pin coefficient buttons to save current values."""
     ctx = callback_context
     if not ctx.triggered or not any(clicks):
         return state
@@ -1976,7 +1976,7 @@ def handle_pin_coefficient_buttons(clicks, slider_values, state):
     prevent_initial_call=False
 )
 def update_pinned_values_display(state):
-    """Update the pinned values display when coefficients are starred."""
+    """Update the pinned values display when coefficients are pinned."""
     pinned_values = state.get('pinned_values', {})
     
     if not pinned_values:
