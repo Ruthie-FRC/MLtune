@@ -1907,17 +1907,23 @@ def handle_coefficient_bulk_actions(increase_clicks, decrease_clicks, reset_clic
     
     # Current values
     current_values = [drag_val, grav_val, shot_val, target_val, angle_val, rpm_val, velocity_val]
+    coeff_names = ['kDragCoefficient', 'kGravity', 'kShotHeight', 'kTargetHeight', 'kShooterAngle', 'kShooterRPM', 'kExitVelocity']
+    
+    def clamp_value(value, coeff_name):
+        """Clamp a value to its min/max bounds."""
+        config = COEFFICIENT_CONFIG.get(coeff_name, {'min': 0, 'max': 100})
+        return max(config['min'], min(value, config['max']))
     
     if button_id == 'increase-all-btn':
         print("⬆️ Increasing All Coefficients by 10%")
-        # Increase all coefficient values by 10%
-        new_values = [v * 1.1 for v in current_values]
+        # Increase all coefficient values by 10%, clamping to max
+        new_values = [clamp_value(v * 1.1, name) for v, name in zip(current_values, coeff_names)]
         return new_values + [state]
         
     elif button_id == 'decrease-all-btn':
         print("⬇️ Decreasing All Coefficients by 10%")
-        # Decrease all coefficient values by 10%
-        new_values = [v * 0.9 for v in current_values]
+        # Decrease all coefficient values by 10%, clamping to min
+        new_values = [clamp_value(v * 0.9, name) for v, name in zip(current_values, coeff_names)]
         return new_values + [state]
         
     elif button_id == 'reset-all-coeff-btn':
@@ -2425,6 +2431,7 @@ def update_status_bar(n_intervals, state):
 
 if __name__ == '__main__':
     import webbrowser, threading, time
+    import os
 
     print("=" * 60)
     print("MLtune Dashboard Starting")
@@ -2440,4 +2447,7 @@ if __name__ == '__main__':
 
     # Start the browser in a background thread
     threading.Thread(target=open_browser, daemon=True).start()
-    app.run(debug=True, host='0.0.0.0', port=8050)
+    
+    # Use debug mode only in development, not in production
+    debug_mode = os.environ.get('DASH_DEBUG', 'false').lower() == 'true'
+    app.run(debug=debug_mode, host='0.0.0.0', port=8050)
