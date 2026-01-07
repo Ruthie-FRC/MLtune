@@ -167,14 +167,6 @@ def create_top_nav():
                             html.Div("No robot", style={'fontSize': '11px', 'color': 'var(--text-tertiary)'})
                         ])
                     ]),
-                    # Mode toggle
-                    dbc.Button(
-                        "Switch to Advanced",
-                        id='mode-toggle',
-                        className="btn-secondary",
-                        size="sm",
-                        title="Switch between Normal and Advanced modes"
-                    ),
                 ]
             )
         ]
@@ -220,17 +212,6 @@ def create_dashboard_view():
             html.Span("Dashboard", className="breadcrumb-item active"),
         ]),
         
-        # Dismissible banner
-        html.Div(
-            id='keyboard-banner',
-            className="banner",
-            children=[
-                html.Span("Tip: Press ? to view all keyboard shortcuts for faster control"),
-                dbc.Button("✕", id='dismiss-banner', size="sm", className="btn-secondary", style={'marginLeft': 'auto'})
-            ],
-            style={'display': 'none' if app_state['banner_dismissed'] else 'flex'}
-        ),
-        
         # Main dashboard grid
         html.Div(className='dashboard-grid', children=[
             # Left column - Quick actions and status
@@ -240,10 +221,10 @@ def create_dashboard_view():
                     html.Div("Quick Actions", className="card-header"),
                     html.P("Start tuning with a single click", style={'fontSize': '14px', 'color': 'var(--text-secondary)', 'marginBottom': '12px'}),
                     html.Div(style={'display': 'flex', 'flexDirection': 'column', 'gap': '8px'}, children=[
-                        dbc.Button("Start Tuner (Ctrl+S)", id='start-tuner-btn', className="btn-primary", style={'width': '100%', 'padding': '10px'}),
-                        dbc.Button("Stop Tuner (Ctrl+Q)", id='stop-tuner-btn', className="btn-danger", style={'width': '100%', 'padding': '10px'}),
-                        dbc.Button("Run Optimization (Ctrl+O)", id='run-optimization-btn', className="btn-primary", style={'width': '100%', 'padding': '10px'}),
-                        dbc.Button("Skip Coefficient (Ctrl+K)", id='skip-coefficient-btn', className="btn-secondary", style={'width': '100%', 'padding': '10px'}),
+                        dbc.Button("Start Tuner", id='start-tuner-btn', className="btn-primary", style={'width': '100%', 'padding': '10px'}),
+                        dbc.Button("Stop Tuner", id='stop-tuner-btn', className="btn-danger", style={'width': '100%', 'padding': '10px'}),
+                        dbc.Button("Run Optimization", id='run-optimization-btn', className="btn-primary", style={'width': '100%', 'padding': '10px'}),
+                        dbc.Button("Skip Coefficient", id='skip-coefficient-btn', className="btn-secondary", style={'width': '100%', 'padding': '10px'}),
                     ])
                 ]),
                 
@@ -278,8 +259,8 @@ def create_dashboard_view():
                     html.Div("Coefficient Navigation", className="card-header"),
                     html.P("Navigate between coefficients", style={'fontSize': '14px', 'color': 'var(--text-secondary)', 'marginBottom': '12px'}),
                     html.Div(style={'display': 'flex', 'gap': '8px'}, children=[
-                        dbc.Button("◀ Previous (Ctrl+←)", id='prev-coeff-btn', className="btn-secondary", style={'flex': '1', 'padding': '10px'}),
-                        dbc.Button("Next ▶ (Ctrl+→)", id='next-coeff-btn', className="btn-secondary", style={'flex': '1', 'padding': '10px'}),
+                        dbc.Button("◀ Previous", id='prev-coeff-btn', className="btn-secondary", style={'flex': '1', 'padding': '10px'}),
+                        dbc.Button("Next ▶", id='next-coeff-btn', className="btn-secondary", style={'flex': '1', 'padding': '10px'}),
                     ])
                 ]),
                 
@@ -288,9 +269,9 @@ def create_dashboard_view():
                     html.Div("Fine Tuning Controls", className="card-header"),
                     html.P("Adjust current coefficient in small increments", style={'fontSize': '14px', 'color': 'var(--text-secondary)', 'marginBottom': '12px'}),
                     html.Div(style={'display': 'flex', 'flexDirection': 'column', 'gap': '8px', 'alignItems': 'center'}, children=[
-                        dbc.Button("⬆ Up (Ctrl+↑)", id='fine-tune-up-btn', className="btn-secondary", style={'width': '160px', 'padding': '8px'}),
+                        dbc.Button("⬆ Up", id='fine-tune-up-btn', className="btn-secondary", style={'width': '160px', 'padding': '8px'}),
                         dbc.Button("Reset", id='fine-tune-reset-btn', className="btn-secondary", style={'width': '160px', 'padding': '8px'}),
-                        dbc.Button("⬇ Down (Ctrl+↓)", id='fine-tune-down-btn', className="btn-secondary", style={'width': '160px', 'padding': '8px'}),
+                        dbc.Button("⬇ Down", id='fine-tune-down-btn', className="btn-secondary", style={'width': '160px', 'padding': '8px'}),
                     ])
                 ]),
             ]),
@@ -1663,32 +1644,14 @@ def toggle_sidebar(n_clicks, current_class):
 @app.callback(
     [Output('app-state', 'data'),
      Output('root-container', 'data-theme')],
-    [Input('mode-toggle', 'n_clicks')],
-    [State('app-state', 'data')]
+    [Input('update-interval', 'n_intervals')],  # Dummy input to keep callback structure
+    [State('app-state', 'data')],
+    prevent_initial_call=True
 )
-def update_app_state(mode_clicks, state):
+def update_app_state(n_intervals, state):
     """Update application state."""
-    ctx = callback_context
-    if not ctx.triggered:
-        return state, 'light'
-    
-    button_id = ctx.triggered[0]['prop_id'].split('.')[0]
-    
-    if button_id == 'mode-toggle':
-        state['mode'] = 'advanced' if state['mode'] == 'normal' else 'normal'
-    
+    # Simplified - no mode toggling anymore
     return state, 'light'  # Always return light theme
-
-
-@app.callback(
-    Output('keyboard-banner', 'style'),
-    [Input('dismiss-banner', 'n_clicks')]
-)
-def dismiss_banner(n_clicks):
-    """Dismiss the keyboard shortcuts banner."""
-    if n_clicks:
-        return {'display': 'none'}
-    return {'display': 'flex'}
 
 
 
@@ -2404,18 +2367,6 @@ def handle_danger_zone_buttons(reconfig_clicks, restore_clicks, lock_clicks, exp
         print("🔄 Forcing Retune of Current Coefficient...")
     
     return state
-
-
-@app.callback(
-    Output('mode-toggle', 'children'),
-    [Input('app-state', 'data')]
-)
-def update_mode_toggle_label(state):
-    """Update the mode toggle button label based on current mode."""
-    if state.get('mode', 'normal') == 'normal':
-        return "Switch to Advanced"
-    else:
-        return "Switch to Normal"
 
 
 @app.callback(
