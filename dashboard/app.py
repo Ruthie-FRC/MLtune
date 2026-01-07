@@ -1435,13 +1435,131 @@ def create_logs_view():
 
 
 def create_help_view():
-    """Create the help view."""
+    """Create the help and resources view."""
     return html.Div([
+        # Summary
         html.Div(className="card", children=[
-            html.Div("About", className="card-header"),
-            html.P("MLtune Dashboard v1.0"),
-            html.P("Comprehensive browser-based control system for the Bayesian Optimization Tuner."),
-            html.P("Features: GitHub-inspired design, two-level mode system, and complete runtime control over all tuner settings.")
+            html.Div("About MLtune", className="card-header"),
+            html.P("MLtune Dashboard v1.0", style={'fontWeight': 'bold', 'fontSize': '16px'}),
+            html.P("Comprehensive browser-based control system for Bayesian Optimization Tuner."),
+            html.P("MLtune uses advanced machine learning to automatically tune FRC robot shooting parameters. This dashboard provides complete runtime control over the tuning process with an intuitive interface."),
+            html.P("Features: GitHub-inspired design, two-level mode system, real-time monitoring, and complete control over all tuner settings.", style={'fontStyle': 'italic', 'color': 'var(--text-secondary)'})
+        ]),
+        
+        # Documentation
+        html.Div(className="card", children=[
+            html.Div("📚 Documentation", className="card-header"),
+            html.P("Complete guides and documentation for using MLtune:"),
+            html.Ul([
+                html.Li([
+                    html.A("Getting Started Guide", href="https://github.com/Ruthie-FRC/MLtune/blob/main/docs/GETTING_STARTED.md", target="_blank", style={'color': 'var(--accent-primary)', 'textDecoration': 'none', 'fontWeight': '500'}),
+                    " - First-time setup and installation"
+                ]),
+                html.Li([
+                    html.A("Usage Guide", href="https://github.com/Ruthie-FRC/MLtune/blob/main/docs/USAGE.md", target="_blank", style={'color': 'var(--accent-primary)', 'textDecoration': 'none', 'fontWeight': '500'}),
+                    " - How to use the tuner and dashboard"
+                ]),
+                html.Li([
+                    html.A("Dashboard Guide", href="https://github.com/Ruthie-FRC/MLtune/blob/main/docs/dashboard/README.md", target="_blank", style={'color': 'var(--accent-primary)', 'textDecoration': 'none', 'fontWeight': '500'}),
+                    " - Detailed dashboard features and controls"
+                ]),
+                html.Li([
+                    html.A("Robot Integration", href="https://github.com/Ruthie-FRC/MLtune/blob/main/docs/ROBOT_INTEGRATION.md", target="_blank", style={'color': 'var(--accent-primary)', 'textDecoration': 'none', 'fontWeight': '500'}),
+                    " - Integrate MLtune with your robot code"
+                ]),
+                html.Li([
+                    html.A("Repository Structure", href="https://github.com/Ruthie-FRC/MLtune/blob/main/docs/REPO_STRUCTURE.md", target="_blank", style={'color': 'var(--accent-primary)', 'textDecoration': 'none', 'fontWeight': '500'}),
+                    " - Understanding the codebase"
+                ]),
+            ])
+        ]),
+        
+        # Get Help
+        html.Div(className="card", children=[
+            html.Div("💬 Get Help & Support", className="card-header"),
+            html.P("Need help or have questions? Here's how to reach us:"),
+            html.Div(style={'marginBottom': '16px'}, children=[
+                html.Strong("ChiefDelphi (Recommended):"),
+                html.Br(),
+                html.A("Message @Ruthie-FRC on ChiefDelphi", href="https://www.chiefdelphi.com/u/ruthie-frc/summary", target="_blank", style={'color': 'var(--accent-primary)', 'textDecoration': 'none', 'fontWeight': '500'}),
+                html.Br(),
+                html.Small("Send a direct message for personalized help and support", style={'color': 'var(--text-secondary)'})
+            ]),
+            html.Div(style={'marginBottom': '16px'}, children=[
+                html.Strong("GitHub Issues:"),
+                html.Br(),
+                html.A("Report bugs or request features", href="https://github.com/Ruthie-FRC/MLtune/issues", target="_blank", style={'color': 'var(--accent-primary)', 'textDecoration': 'none', 'fontWeight': '500'}),
+                html.Br(),
+                html.Small("For bug reports, feature requests, or technical issues", style={'color': 'var(--text-secondary)'})
+            ]),
+            html.Div(style={'marginBottom': '16px'}, children=[
+                html.Strong("GitHub Discussions:"),
+                html.Br(),
+                html.A("Join the community discussion", href="https://github.com/Ruthie-FRC/MLtune/discussions", target="_blank", style={'color': 'var(--accent-primary)', 'textDecoration': 'none', 'fontWeight': '500'}),
+                html.Br(),
+                html.Small("Ask questions, share tips, and connect with other users", style={'color': 'var(--text-secondary)'})
+            ])
+        ]),
+        
+        # Troubleshooting
+        html.Div(className="card", children=[
+            html.Div("🔧 Troubleshooting", className="card-header"),
+            html.P("Common issues and solutions:"),
+            html.Div(style={'marginBottom': '12px'}, children=[
+                html.Strong("Connection Issues:"),
+                html.Ul([
+                    html.Li("Verify robot is powered on and connected to network"),
+                    html.Li("Check team number in configuration matches your robot"),
+                    html.Li("Ensure NetworkTables is enabled on robot"),
+                    html.Li("Check firewall settings if using wireless connection")
+                ])
+            ]),
+            html.Div(style={'marginBottom': '12px'}, children=[
+                html.Strong("Dashboard Not Loading:"),
+                html.Ul([
+                    html.Li("Ensure all dependencies are installed: pip install -r dashboard/requirements.txt"),
+                    html.Li("Try a different web browser (Chrome or Firefox recommended)"),
+                    html.Li("Clear browser cache and reload the page")
+                ])
+            ]),
+            html.Div(style={'marginBottom': '12px'}, children=[
+                html.Strong("For more help:"),
+                html.Br(),
+                html.A("View full troubleshooting guide", href="https://github.com/Ruthie-FRC/MLtune/blob/main/docs/USAGE.md#troubleshooting", target="_blank", style={'color': 'var(--accent-primary)', 'textDecoration': 'none', 'fontWeight': '500'})
+            ])
+        ]),
+        
+        # Contributing
+        html.Div(className="card", children=[
+            html.Div("🤝 Contributing", className="card-header"),
+            html.P("Want to contribute to MLtune? We welcome contributions!"),
+            html.Ul([
+                html.Li([
+                    html.A("Contributing Guide", href="https://github.com/Ruthie-FRC/MLtune/blob/main/docs/CONTRIBUTING.md", target="_blank", style={'color': 'var(--accent-primary)', 'textDecoration': 'none', 'fontWeight': '500'}),
+                    " - Learn how to contribute code, documentation, or ideas"
+                ]),
+                html.Li([
+                    html.A("View source on GitHub", href="https://github.com/Ruthie-FRC/MLtune", target="_blank", style={'color': 'var(--accent-primary)', 'textDecoration': 'none', 'fontWeight': '500'}),
+                    " - Fork the repository and submit pull requests"
+                ]),
+                html.Li([
+                    html.A("Code of Conduct", href="https://github.com/Ruthie-FRC/MLtune/blob/main/CODE_OF_CONDUCT.md", target="_blank", style={'color': 'var(--accent-primary)', 'textDecoration': 'none', 'fontWeight': '500'}),
+                    " - Our community guidelines"
+                ])
+            ]),
+            html.P("Contributions of all kinds are welcome: bug fixes, new features, documentation improvements, and more!", style={'marginTop': '12px', 'fontStyle': 'italic'})
+        ]),
+        
+        # License & Credits
+        html.Div(className="card", children=[
+            html.Div("⚖️ License & Credits", className="card-header"),
+            html.P([
+                "MLtune is open source software licensed under the ",
+                html.A("GNU General Public License v3.0", href="https://github.com/Ruthie-FRC/MLtune/blob/main/LICENSE", target="_blank", style={'color': 'var(--accent-primary)', 'textDecoration': 'none', 'fontWeight': '500'}),
+                "."
+            ]),
+            html.P("Created and maintained by Ruthie-FRC", style={'fontWeight': '500'}),
+            html.P("Copyright © 2025 Ruthie-FRC. All rights reserved.", style={'fontSize': '12px', 'color': 'var(--text-secondary)'})
         ]),
     ])
 
