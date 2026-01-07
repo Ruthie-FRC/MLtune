@@ -129,6 +129,24 @@ COEFFICIENT_CONFIG = {
     'kExitVelocity': {'step': 0.1, 'min': 0, 'max': 30}
 }
 
+# Ordered list of coefficient names for consistent iteration
+COEFFICIENT_NAMES = list(COEFFICIENT_DEFAULTS.keys())
+
+
+def clamp_coefficient_value(value, coeff_name):
+    """
+    Clamp a coefficient value to its configured min/max bounds.
+    
+    Args:
+        value: The value to clamp
+        coeff_name: The name of the coefficient (e.g., 'kDragCoefficient')
+        
+    Returns:
+        The clamped value within valid bounds
+    """
+    config = COEFFICIENT_CONFIG.get(coeff_name, {'min': 0, 'max': 100})
+    return max(config['min'], min(value, config['max']))
+
 
 def create_top_nav():
     """Create the top navigation bar."""
@@ -1905,46 +1923,33 @@ def handle_coefficient_bulk_actions(increase_clicks, decrease_clicks, reset_clic
     
     button_id = ctx.triggered[0]['prop_id'].split('.')[0]
     
-    # Current values
+    # Current values in the same order as COEFFICIENT_NAMES
     current_values = [drag_val, grav_val, shot_val, target_val, angle_val, rpm_val, velocity_val]
-    coeff_names = ['kDragCoefficient', 'kGravity', 'kShotHeight', 'kTargetHeight', 'kShooterAngle', 'kShooterRPM', 'kExitVelocity']
-    
-    def clamp_value(value, coeff_name):
-        """Clamp a value to its min/max bounds."""
-        config = COEFFICIENT_CONFIG.get(coeff_name, {'min': 0, 'max': 100})
-        return max(config['min'], min(value, config['max']))
     
     if button_id == 'increase-all-btn':
         print("⬆️ Increasing All Coefficients by 10%")
         # Increase all coefficient values by 10%, clamping to max
-        new_values = [clamp_value(v * 1.1, name) for v, name in zip(current_values, coeff_names)]
+        new_values = [clamp_coefficient_value(v * 1.1, name) for v, name in zip(current_values, COEFFICIENT_NAMES)]
         return new_values + [state]
         
     elif button_id == 'decrease-all-btn':
         print("⬇️ Decreasing All Coefficients by 10%")
         # Decrease all coefficient values by 10%, clamping to min
-        new_values = [clamp_value(v * 0.9, name) for v, name in zip(current_values, coeff_names)]
+        new_values = [clamp_coefficient_value(v * 0.9, name) for v, name in zip(current_values, COEFFICIENT_NAMES)]
         return new_values + [state]
         
     elif button_id == 'reset-all-coeff-btn':
         print("🔄 Resetting All Coefficients to Defaults")
-        # Reset all coefficients to defaults
+        # Reset all coefficients to defaults using COEFFICIENT_NAMES for consistent ordering
         state['coefficient_values'] = {}
-        default_values = [COEFFICIENT_DEFAULTS['kDragCoefficient'], COEFFICIENT_DEFAULTS['kGravity'], COEFFICIENT_DEFAULTS['kShotHeight'],
-                         COEFFICIENT_DEFAULTS['kTargetHeight'], COEFFICIENT_DEFAULTS['kShooterAngle'], COEFFICIENT_DEFAULTS['kShooterRPM'],
-                         COEFFICIENT_DEFAULTS['kExitVelocity']]
+        default_values = [COEFFICIENT_DEFAULTS[name] for name in COEFFICIENT_NAMES]
         return default_values + [state]
         
     elif button_id == 'copy-coeff-btn':
         print("📋 Copied Current Coefficient Values")
         # Log current values (in real implementation, would copy to clipboard)
-        print(f"  kDragCoefficient: {drag_val}")
-        print(f"  kGravity: {grav_val}")
-        print(f"  kShotHeight: {shot_val}")
-        print(f"  kTargetHeight: {target_val}")
-        print(f"  kShooterAngle: {angle_val}")
-        print(f"  kShooterRPM: {rpm_val}")
-        print(f"  kExitVelocity: {velocity_val}")
+        for name, value in zip(COEFFICIENT_NAMES, current_values):
+            print(f"  {name}: {value}")
         return current_values + [state]
     
     return current_values + [state]
