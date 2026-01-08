@@ -1,6 +1,5 @@
-/* GitHub-Inspired Design System */
+/* Light Mode Design System - Pure white with orange accents */
 :root {
-    /* Light theme (default) - Pure white with orange accents */
     --bg-primary: #ffffff;
     --bg-secondary: #f6f8fa;
     --bg-tertiary: #f0f0f0;
@@ -41,23 +40,6 @@
     --font-size-md: 16px;
     --font-size-lg: 20px;
     --font-size-xl: 24px;
-}
-
-[data-theme="dark"] {
-    --bg-primary: #0d1117;
-    --bg-secondary: #161b22;
-    --bg-tertiary: #21262d;
-    --text-primary: #e6edf3;
-    --text-secondary: #9198a1;
-    --text-tertiary: #7d8590;
-    --border-default: #30363d;
-    --border-muted: #21262d;
-    --accent-subtle: #2d1a05;
-    
-    /* Dark mode shadows */
-    --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
-    --shadow-md: 0 2px 6px rgba(0,0,0,0.4);
-    --shadow-lg: 0 4px 12px rgba(0,0,0,0.5);
 }
 
 body {

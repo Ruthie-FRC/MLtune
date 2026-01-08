@@ -85,23 +85,10 @@ app.index_string = '''
 # Global state management
 app_state = {
     'mode': 'normal',  # 'normal' or 'advanced'
-    'theme': 'light',  # 'light' or 'dark'
-    'more_features': False,
-    'sidebar_collapsed': False,
     'tuner_enabled': False,
     'current_coefficient': 'kDragCoefficient',
     'coefficient_values': {},
-    'notes': [],
-    'todos': [],
     'selected_algorithm': 'gp',
-    'graphs_visible': {
-        'success_rate': True,
-        'coefficient_history': True,
-        'optimization_progress': True,
-        'shot_distribution': False
-    },
-    'banner_dismissed': False,
-    'config_locked': False,
     'shot_count': 0,
     'success_rate': 0.0,
     'connection_status': 'disconnected'
@@ -166,14 +153,6 @@ def create_top_nav():
                             html.Div("No robot", style={'fontSize': '11px', 'color': 'var(--text-tertiary)'})
                         ])
                     ]),
-                    # Dark mode toggle
-                    dbc.Button(
-                        "🌙 Dark Mode",
-                        id='theme-toggle',
-                        className="btn-secondary",
-                        size="sm",
-                        title="Toggle between light and dark theme"
-                    ),
                 ]
             )
         ]
@@ -191,12 +170,9 @@ def create_sidebar():
             html.Div([
                 html.Button("Dashboard", id={'type': 'nav-btn', 'index': 'dashboard'}, className="sidebar-menu-item active"),
                 html.Button("Coefficients", id={'type': 'nav-btn', 'index': 'coefficients'}, className="sidebar-menu-item"),
-                html.Button("Order & Workflow", id={'type': 'nav-btn', 'index': 'workflow'}, className="sidebar-menu-item"),
-                html.Button("Graphs & Analytics", id={'type': 'nav-btn', 'index': 'graphs'}, className="sidebar-menu-item"),
+                html.Button("Graphs", id={'type': 'nav-btn', 'index': 'graphs'}, className="sidebar-menu-item"),
                 html.Button("Settings", id={'type': 'nav-btn', 'index': 'settings'}, className="sidebar-menu-item"),
                 html.Button("Robot Status", id={'type': 'nav-btn', 'index': 'robot'}, className="sidebar-menu-item"),
-                html.Button("Notes & To-Do", id={'type': 'nav-btn', 'index': 'notes'}, className="sidebar-menu-item"),
-                html.Button("Danger Zone", id={'type': 'nav-btn', 'index': 'danger'}, className="sidebar-menu-item"),
                 html.Button("System Logs", id={'type': 'nav-btn', 'index': 'logs'}, className="sidebar-menu-item"),
                 html.Button("Help", id={'type': 'nav-btn', 'index': 'help'}, className="sidebar-menu-item"),
             ])
@@ -287,7 +263,7 @@ def create_dashboard_view():
 
 
 def create_coefficients_view():
-    """Create the comprehensive coefficients management view with ALL 7 parameters."""
+    """Create the coefficients management view with all 7 parameters and orange sliders."""
     # All 7 coefficients with their actual ranges and defaults
     coefficients = {
         'kDragCoefficient': {'min': 0.001, 'max': 0.01, 'default': 0.003, 'step': 0.0001},
@@ -312,10 +288,10 @@ def create_coefficients_view():
             ])
         ]),
         
-        # Individual coefficient cards with full controls
+        # Individual coefficient cards with sliders
         html.Div([
             html.Div(id={'type': 'coeff-card', 'index': coeff}, className="card", style={'marginBottom': '12px'}, children=[
-                # Header row with coefficient name and jump button
+                # Header row with coefficient name
                 html.Div(style={'display': 'flex', 'justifyContent': 'space-between', 'alignItems': 'center', 'marginBottom': '12px'}, children=[
                     html.Div([
                         html.Span(coeff, style={'fontWeight': 'bold', 'fontSize': '16px'}),
@@ -323,10 +299,7 @@ def create_coefficients_view():
                         html.Span(f"{params['default']}", id={'type': 'coeff-current-display', 'index': coeff}, style={'color': 'var(--text-secondary)', 'fontSize': '14px'}),
                         html.Span(")", style={'color': 'var(--text-secondary)', 'fontSize': '14px'}),
                     ]),
-                    html.Div(style={'display': 'flex', 'gap': '4px'}, children=[
-                        dbc.Button("📌", id={'type': 'pin-coeff-btn', 'index': coeff}, size="sm", className="btn-secondary", title="Pin this value"),
-                        dbc.Button("Jump to", id={'type': 'jump-to-btn', 'index': coeff}, size="sm", className="btn-primary")
-                    ])
+                    dbc.Button("Jump to", id={'type': 'jump-to-btn', 'index': coeff}, size="sm", className="btn-primary")
                 ]),
                 
                 # Range info
@@ -336,7 +309,7 @@ def create_coefficients_view():
                     html.Span(f"Max: {params['max']}")
                 ]),
                 
-                # Main slider
+                # Main slider (orange)
                 dcc.Slider(
                     id={'type': 'coeff-slider', 'index': coeff},
                     min=params['min'],
@@ -359,66 +332,8 @@ def create_coefficients_view():
                     dbc.Button("+", id={'type': 'fine-inc', 'index': coeff}, size="sm", className="btn-secondary", title=f"+{params['step']}"),
                     dbc.Button("++", id={'type': 'fine-inc-large', 'index': coeff}, size="sm", className="btn-secondary", title=f"+{params['step']*10}"),
                 ]),
-                
-                # Per-coefficient settings (Advanced mode)
-                html.Div(id={'type': 'coeff-advanced-settings', 'index': coeff}, style={'display': 'none'}, children=[
-                    html.Hr(),
-                    html.Div("Per-Coefficient Settings", style={'fontWeight': 'bold', 'fontSize': '14px', 'marginBottom': '8px'}),
-                    dbc.Checklist(
-                        id={'type': 'coeff-overrides', 'index': coeff},
-                        options=[
-                            {'label': 'Override autotune settings', 'value': 'autotune_override'},
-                            {'label': 'Override auto-advance settings', 'value': 'auto_advance_override'},
-                            {'label': 'Lock this coefficient', 'value': 'locked'},
-                            {'label': 'Skip in tuning order', 'value': 'skip'},
-                        ],
-                        value=[],
-                        switch=True,
-                        inline=False
-                    ),
-                    html.Div(id={'type': 'coeff-override-inputs', 'index': coeff}, style={'marginTop': '8px'}, children=[
-                        html.Label("Custom shot threshold:", style={'fontSize': '12px'}),
-                        dbc.Input(type="number", value=10, id={'type': 'coeff-threshold', 'index': coeff}, size="sm"),
-                    ])
-                ])
             ]) for coeff, params in coefficients.items()
         ]),
-        
-        # Pinned values section
-        html.Div(className="card", children=[
-            html.Div("📌 Pinned Values", className="card-header"),
-            html.P("Save and quickly restore coefficient sets", style={'color': 'var(--text-secondary)'}),
-            html.Div(id='pinned-values-list', children=[
-                html.P("No pinned values yet. Click 📌 on any coefficient to pin it.", style={'fontStyle': 'italic', 'color': 'var(--text-secondary)'})
-            ])
-        ]),
-        
-        # Coefficient history
-        html.Div(className="card", children=[
-            html.Div("Coefficient History", className="card-header"),
-            html.Div(id='coefficient-history-table', children=[
-                html.Table(className="table-github", children=[
-                    html.Thead([
-                        html.Tr([
-                            html.Th("Timestamp"),
-                            html.Th("Coefficient"),
-                            html.Th("Old Value"),
-                            html.Th("New Value"),
-                            html.Th("Reason"),
-                        ])
-                    ]),
-                    html.Tbody([
-                        html.Tr([
-                            html.Td("--:--:--"),
-                            html.Td("--"),
-                            html.Td("--"),
-                            html.Td("--"),
-                            html.Td("No history yet")
-                        ])
-                    ])
-                ])
-            ])
-        ])
     ])
 
 
@@ -818,7 +733,7 @@ def create_workflow_view():
 
 
 def create_settings_view():
-    """Create the settings and configuration view with ALL options."""
+    """Create simplified settings view with only essential options."""
     return html.Div([
         # Core Tuner Settings
         html.Div(className="card", children=[
@@ -830,8 +745,6 @@ def create_settings_view():
                         {'label': 'Enable Tuner', 'value': 'enabled'},
                         {'label': 'Auto-optimize', 'value': 'auto_optimize'},
                         {'label': 'Auto-advance', 'value': 'auto_advance'},
-                        {'label': 'Manual mode', 'value': 'manual_mode'},
-                        {'label': 'Match mode protection', 'value': 'match_protection'},
                     ],
                     value=['enabled'],
                     switch=True
@@ -839,106 +752,10 @@ def create_settings_view():
                 html.Small("Enable Tuner: Activate the Bayesian optimization system", style={'color': 'var(--text-secondary)', 'display': 'block', 'marginTop': '4px'}),
                 html.Small("Auto-optimize: Automatically run optimization after reaching shot threshold", style={'color': 'var(--text-secondary)', 'display': 'block', 'marginTop': '2px'}),
                 html.Small("Auto-advance: Automatically move to next coefficient when threshold reached", style={'color': 'var(--text-secondary)', 'display': 'block', 'marginTop': '2px'}),
-                html.Small("Manual mode: Require manual confirmation before applying coefficient changes", style={'color': 'var(--text-secondary)', 'display': 'block', 'marginTop': '2px'}),
-                html.Small("Match mode protection: Prevent tuning changes during competition matches", style={'color': 'var(--text-secondary)', 'display': 'block', 'marginTop': '2px'}),
                 html.Hr(),
-                html.Label("Auto-optimize Shot Threshold", style={'fontWeight': 'bold'}),
+                html.Label("Shot Threshold", style={'fontWeight': 'bold'}),
                 dbc.Input(type="number", value=10, id='auto-optimize-threshold', min=1, max=100),
-                html.Br(),
-                html.Label("Auto-advance Shot Threshold", style={'fontWeight': 'bold'}),
-                dbc.Input(type="number", value=10, id='auto-advance-threshold', min=1, max=100),
-                html.Br(),
-                html.Label("Success Rate Threshold (%)", style={'fontWeight': 'bold'}),
-                dbc.Input(type="number", value=80, id='success-threshold', min=0, max=100),
-            ])
-        ]),
-        
-        # Auto-Baseline Settings
-        html.Div(className="card", children=[
-            html.Div("Auto-Baseline Settings", className="card-header"),
-            html.P("Automatically set optimal coefficients as new baseline", style={'fontSize': '14px', 'color': 'var(--text-secondary)'}),
-            html.Div([
-                dbc.Checklist(
-                    id='auto-baseline-toggles',
-                    options=[
-                        {'label': 'Auto-set baseline when optimal detected', 'value': 'auto_baseline'},
-                        {'label': 'Show recommendation (button glows when optimal)', 'value': 'recommend_baseline'},
-                    ],
-                    value=['recommend_baseline'],
-                    switch=True
-                ),
-                html.Small("Auto-set: Immediately save coefficients as baseline when optimal performance is detected", style={'color': 'var(--text-secondary)', 'display': 'block', 'marginTop': '4px'}),
-                html.Small("Recommendation mode: Highlight the Set Baseline button when optimal, wait for your confirmation", style={'color': 'var(--text-secondary)', 'display': 'block', 'marginTop': '2px'}),
-                html.Hr(),
-                html.Label("Optimal Detection Criteria", style={'fontWeight': 'bold', 'marginTop': '8px'}),
-                html.Small("System considers coefficients optimal when:", style={'color': 'var(--text-secondary)', 'display': 'block', 'marginBottom': '8px'}),
-                
-                html.Label("Minimum Success Rate (%)", style={'fontWeight': 'bold', 'fontSize': '14px'}),
-                dbc.Input(type="number", value=85, id='baseline-success-threshold', min=50, max=100),
-                html.Small("Success rate must exceed this value", style={'color': 'var(--text-secondary)'}),
-                html.Br(), html.Br(),
-                
-                html.Label("Minimum Shot Count", style={'fontWeight': 'bold', 'fontSize': '14px'}),
-                dbc.Input(type="number", value=20, id='baseline-shot-threshold', min=10, max=100),
-                html.Small("Must have at least this many shots", style={'color': 'var(--text-secondary)'}),
-                html.Br(), html.Br(),
-                
-                html.Label("Stability Window (shots)", style={'fontWeight': 'bold', 'fontSize': '14px'}),
-                dbc.Input(type="number", value=5, id='baseline-stability-window', min=3, max=20),
-                html.Small("Success rate must be stable over this many shots", style={'color': 'var(--text-secondary)'}),
-                html.Br(), html.Br(),
-                
-                # Manual baseline button with glow capability
-                html.Div(style={'marginTop': '16px', 'padding': '12px', 'backgroundColor': 'var(--accent-subtle)', 'borderRadius': '6px'}, children=[
-                    html.Label("Manual Override", style={'fontWeight': 'bold', 'display': 'block', 'marginBottom': '8px'}),
-                    html.P("Click to set current coefficients as baseline now", style={'fontSize': '13px', 'color': 'var(--text-secondary)', 'marginBottom': '12px'}),
-                    dbc.Button(
-                        "Set Current as Baseline", 
-                        id='set-baseline-btn', 
-                        className="btn-primary",
-                        style={'width': '100%', 'padding': '12px'},
-                        n_clicks=0
-                    ),
-                    html.Small(id='baseline-recommendation', children='', style={'display': 'block', 'marginTop': '8px', 'color': 'var(--text-secondary)', 'fontStyle': 'italic'})
-                ])
-            ])
-        ]),
-        
-        # Optimization Parameters
-        html.Div(className="card", children=[
-            html.Div("Optimization Parameters", className="card-header"),
-            html.Div([
-                html.Label("Initial Points", style={'fontWeight': 'bold'}),
-                dbc.Input(type="number", value=5, id='n-initial-points', min=1, max=20),
-                html.Small("Number of random points before optimization", style={'color': 'var(--text-secondary)'}),
-                html.Br(), html.Br(),
-                
-                html.Label("Calls per Coefficient", style={'fontWeight': 'bold'}),
-                dbc.Input(type="number", value=30, id='n-calls', min=5, max=100),
-                html.Small("Maximum optimization iterations per coefficient", style={'color': 'var(--text-secondary)'}),
-                html.Br(), html.Br(),
-                
-                html.Label("Acquisition Function", style={'fontWeight': 'bold'}),
-                dbc.Select(
-                    id='acquisition-function',
-                    options=[
-                        {'label': 'Expected Improvement (EI)', 'value': 'EI'},
-                        {'label': 'Lower Confidence Bound (LCB)', 'value': 'LCB'},
-                        {'label': 'Probability of Improvement (PI)', 'value': 'PI'},
-                        {'label': 'Expected Improvement per Second (EIps)', 'value': 'EIps'},
-                    ],
-                    value='EI'
-                ),
-                html.Br(),
-                
-                html.Label("Exploration Factor (xi)", style={'fontWeight': 'bold'}),
-                dbc.Input(type="number", value=0.01, id='xi', min=0, max=1, step=0.001),
-                html.Small("Balance exploration vs exploitation", style={'color': 'var(--text-secondary)'}),
-                html.Br(), html.Br(),
-                
-                html.Label("Convergence Threshold", style={'fontWeight': 'bold'}),
-                dbc.Input(type="number", value=0.001, id='convergence-threshold', min=0.0001, max=0.1, step=0.0001),
-                html.Small("Stop when improvement is below this", style={'color': 'var(--text-secondary)'}),
+                html.Small("Number of shots before optimization", style={'color': 'var(--text-secondary)'}),
             ])
         ]),
         
@@ -954,174 +771,15 @@ def create_settings_view():
                 dbc.Input(type="text", value="/Tuning/BayesianTuner", id='nt-table-path'),
                 html.Br(),
                 
-                html.Label("Update Rate (Hz)", style={'fontWeight': 'bold'}),
-                dbc.Input(type="number", value=10, id='nt-update-rate', min=1, max=50),
-                html.Small("How often to sync with robot", style={'color': 'var(--text-secondary)'}),
-                html.Br(), html.Br(),
-                
                 dbc.Checklist(
                     id='nt-toggles',
                     options=[
-                        {'label': 'Require shot logged interlock', 'value': 'require_shot_logged'},
-                        {'label': 'Require coefficients updated interlock', 'value': 'require_coeff_updated'},
                         {'label': 'Auto-reconnect on disconnect', 'value': 'auto_reconnect'},
                     ],
-                    value=['require_shot_logged'],
+                    value=[],
                     switch=True
                 ),
-                html.Small("Shot logged interlock: Wait for robot confirmation before recording shot data", style={'color': 'var(--text-secondary)', 'display': 'block', 'marginTop': '4px'}),
-                html.Small("Coefficients updated interlock: Wait for robot confirmation that new values were applied", style={'color': 'var(--text-secondary)', 'display': 'block', 'marginTop': '2px'}),
-                html.Small("Auto-reconnect: Automatically attempt to reconnect to robot if connection is lost", style={'color': 'var(--text-secondary)', 'display': 'block', 'marginTop': '2px'}),
             ])
-        ]),
-        
-        # Logging Configuration
-        html.Div(className="card", children=[
-            html.Div("Logging & Data Recording", className="card-header"),
-            html.Div([
-                dbc.Checklist(
-                    id='logging-toggles',
-                    options=[
-                        {'label': 'Enable CSV shot logs', 'value': 'csv_logs'},
-                        {'label': 'Enable JSON coefficient history', 'value': 'json_logs'},
-                        {'label': 'Log all NetworkTables traffic', 'value': 'nt_traffic'},
-                        {'label': 'Verbose debug logging', 'value': 'verbose'},
-                        {'label': 'Log timestamps', 'value': 'timestamps'},
-                        {'label': 'Log coefficient interactions', 'value': 'interactions'},
-                    ],
-                    value=['csv_logs', 'json_logs', 'timestamps'],
-                    switch=True
-                ),
-                html.Small("CSV shot logs: Save individual shot results to CSV files for analysis", style={'color': 'var(--text-secondary)', 'display': 'block', 'marginTop': '4px'}),
-                html.Small("JSON coefficient history: Record all coefficient changes in JSON format", style={'color': 'var(--text-secondary)', 'display': 'block', 'marginTop': '2px'}),
-                html.Small("NetworkTables traffic: Log all communication between dashboard and robot", style={'color': 'var(--text-secondary)', 'display': 'block', 'marginTop': '2px'}),
-                html.Small("Verbose debug: Enable detailed debugging output for troubleshooting", style={'color': 'var(--text-secondary)', 'display': 'block', 'marginTop': '2px'}),
-                html.Small("Timestamps: Include precise timestamps in all log entries", style={'color': 'var(--text-secondary)', 'display': 'block', 'marginTop': '2px'}),
-                html.Small("Coefficient interactions: Log relationships between coefficient changes", style={'color': 'var(--text-secondary)', 'display': 'block', 'marginTop': '2px'}),
-                html.Hr(),
-                
-                html.Label("Log Directory", style={'fontWeight': 'bold'}),
-                dbc.Input(type="text", value="tuner_logs/", id='log-directory'),
-                html.Br(),
-                
-                html.Label("Log File Prefix", style={'fontWeight': 'bold'}),
-                dbc.Input(type="text", value="mltune", id='log-prefix'),
-            ])
-        ]),
-        
-        # Advanced mode only - ML Algorithm Selection
-        html.Div(id='advanced-settings', className="card", style={'display': 'none'}, children=[
-            html.Div("ML Algorithm Selection", className="card-header"),
-            dbc.Select(
-                id='algorithm-selector',
-                options=[
-                    {'label': 'Gaussian Process (GP) - Recommended', 'value': 'gp'},
-                    {'label': 'Random Forest (RF)', 'value': 'rf'},
-                    {'label': 'Gradient Boosted Trees (GBRT)', 'value': 'gbrt'},
-                    {'label': 'Extra Trees (ET)', 'value': 'et'},
-                    {'label': 'Neural Network (NN)', 'value': 'nn'},
-                    {'label': 'Support Vector Regression (SVR)', 'value': 'svr'},
-                    {'label': 'K-Nearest Neighbors (KNN)', 'value': 'knn'},
-                    {'label': 'Ridge Regression', 'value': 'ridge'},
-                    {'label': 'Lasso Regression', 'value': 'lasso'},
-                    {'label': 'Decision Trees', 'value': 'decision_tree'},
-                    {'label': 'AdaBoost', 'value': 'adaboost'},
-                ],
-                value='gp'
-            ),
-            html.Br(),
-            
-            html.Div("Algorithm Hyperparameters", style={'fontWeight': 'bold', 'marginBottom': '8px'}),
-            html.Div(id='algorithm-params', children=[
-                html.Label("Kernel (for GP)"),
-                dbc.Select(
-                    id='gp-kernel',
-                    options=[
-                        {'label': 'RBF (Radial Basis Function)', 'value': 'rbf'},
-                        {'label': 'Matern', 'value': 'matern'},
-                        {'label': 'Rational Quadratic', 'value': 'rational_quadratic'},
-                    ],
-                    value='rbf'
-                ),
-                html.Br(),
-                
-                html.Label("Alpha (noise level)"),
-                dbc.Input(type="number", value=1e-10, id='gp-alpha', step=1e-11),
-                html.Br(),
-                
-                html.Label("Number of Restarts"),
-                dbc.Input(type="number", value=10, id='gp-restarts', min=0, max=50),
-            ]),
-            
-            html.Hr(),
-            html.Div("Hybrid Strategies", className="card-header"),
-            dbc.Checklist(
-                id='hybrid-strategies',
-                options=[
-                    {'label': 'Ensemble Voting - Combine multiple algorithms', 'value': 'ensemble'},
-                    {'label': 'Stacking (Meta-Learning) - Learn best combination', 'value': 'stacking'},
-                    {'label': 'Transfer Learning - Use historical data', 'value': 'transfer'},
-                    {'label': 'Adaptive Algorithm Selection - Auto-pick best', 'value': 'adaptive'},
-                    {'label': 'Multi-Armed Bandit - Explore/exploit algorithms', 'value': 'bandit'},
-                    {'label': 'Bayesian Model Averaging - Weight by probability', 'value': 'bma'},
-                ],
-                value=[],
-                switch=True
-            ),
-            html.Small("Ensemble Voting: Combine predictions from multiple algorithms for better accuracy", style={'color': 'var(--text-secondary)', 'display': 'block', 'marginTop': '4px'}),
-            html.Small("Stacking: Use machine learning to find optimal algorithm combinations", style={'color': 'var(--text-secondary)', 'display': 'block', 'marginTop': '2px'}),
-            html.Small("Transfer Learning: Apply knowledge from previous tuning sessions", style={'color': 'var(--text-secondary)', 'display': 'block', 'marginTop': '2px'}),
-            html.Small("Adaptive Selection: Automatically choose the best-performing algorithm for your situation", style={'color': 'var(--text-secondary)', 'display': 'block', 'marginTop': '2px'}),
-            html.Small("Multi-Armed Bandit: Balance trying new algorithms vs using known good ones", style={'color': 'var(--text-secondary)', 'display': 'block', 'marginTop': '2px'}),
-            html.Small("Bayesian Model Averaging: Weight algorithms based on their predicted probability of success", style={'color': 'var(--text-secondary)', 'display': 'block', 'marginTop': '2px'}),
-            html.Br(),
-            
-            html.Div(id='ensemble-weights', style={'display': 'none'}, children=[
-                html.Div("Ensemble Weights", style={'fontWeight': 'bold', 'marginBottom': '8px'}),
-                html.Label("GP Weight"),
-                dcc.Slider(id='weight-gp', min=0, max=1, step=0.1, value=0.4, marks={0: '0', 0.5: '0.5', 1: '1'}),
-                html.Label("RF Weight"),
-                dcc.Slider(id='weight-rf', min=0, max=1, step=0.1, value=0.3, marks={0: '0', 0.5: '0.5', 1: '1'}),
-                html.Label("GBRT Weight"),
-                dcc.Slider(id='weight-gbrt', min=0, max=1, step=0.1, value=0.3, marks={0: '0', 0.5: '0.5', 1: '1'}),
-            ])
-        ]),
-        
-        # Per-Coefficient Overrides
-        html.Div(id='per-coeff-overrides', className="card", style={'display': 'none'}, children=[
-            html.Div("Per-Coefficient Setting Overrides", className="card-header"),
-            html.P("Override global settings for specific coefficients", style={'color': 'var(--text-secondary)'}),
-            html.Div(id='coefficient-override-list', children=[
-                html.Div(className="card", style={'marginBottom': '8px'}, children=[
-                    html.Div("kDragCoefficient", style={'fontWeight': 'bold'}),
-                    dbc.Checklist(
-                        id={'type': 'coeff-override', 'index': 'kDragCoefficient'},
-                        options=[
-                            {'label': 'Override autotune settings', 'value': 'autotune'},
-                            {'label': 'Override auto-advance settings', 'value': 'auto_advance'},
-                        ],
-                        value=[],
-                        switch=True
-                    ),
-                ])
-            ])
-        ]),
-        
-        # More Features (Advanced + More Features only)
-        html.Div(id='more-features-settings', className="card", style={'display': 'none'}, children=[
-            html.Div("More Features (Experimental)", className="card-header"),
-            dbc.Checklist(
-                id='experimental-toggles',
-                options=[
-                    {'label': 'Enable performance profiling', 'value': 'profiling'},
-                    {'label': 'Show raw NetworkTables values', 'value': 'raw_nt'},
-                    {'label': 'Enable debug mode', 'value': 'debug'},
-                    {'label': 'Show internal state', 'value': 'internal_state'},
-                    {'label': 'Enable experimental algorithms', 'value': 'experimental_algos'},
-                ],
-                value=[],
-                switch=True
-            ),
         ]),
         
         # Save/Load Configuration
@@ -1538,7 +1196,6 @@ def create_help_view():
 # Main layout
 app.layout = html.Div(
     id='root-container',
-    **{'data-theme': 'light'},  # Default theme, updated by callback # type: ignore
     children=[
         dcc.Store(id='app-state', data=app_state),
         dcc.Interval(id='update-interval', interval=1000),  # Update every second
@@ -1603,7 +1260,7 @@ def update_view(clicks, sidebar_class):
     default_view = 'dashboard'
 
     # Sidebar button indices in the same order as create_sidebar
-    nav_indices = ['dashboard', 'coefficients', 'workflow', 'graphs', 'settings', 'robot', 'notes', 'danger', 'logs', 'help']
+    nav_indices = ['dashboard', 'coefficients', 'graphs', 'settings', 'robot', 'logs', 'help']
 
     if not ctx.triggered:
         content = create_dashboard_view()
@@ -1665,45 +1322,6 @@ def toggle_sidebar(n_clicks, current_class):
         else:
             return 'sidebar collapsed'
     return current_class or 'sidebar'
-
-
-@app.callback(
-    [Output('app-state', 'data'),
-     Output('root-container', 'data-theme')],
-    [Input('update-interval', 'n_intervals'),
-     Input('theme-toggle', 'n_clicks')],  # Add theme toggle input
-    [State('app-state', 'data')],
-    prevent_initial_call=True
-)
-def update_app_state(n_intervals, theme_clicks, state):
-    """Update application state and handle theme toggle."""
-    ctx = callback_context
-    
-    # Check if theme toggle was clicked
-    if ctx.triggered:
-        button_id = ctx.triggered[0]['prop_id'].split('.')[0]
-        if button_id == 'theme-toggle':
-            # Toggle theme
-            current_theme = state.get('theme', 'light')
-            new_theme = 'dark' if current_theme == 'light' else 'light'
-            state['theme'] = new_theme
-            return state, new_theme
-    
-    # Return current theme
-    return state, state.get('theme', 'light')
-
-
-@app.callback(
-    Output('theme-toggle', 'children'),
-    [Input('app-state', 'data')]
-)
-def update_theme_toggle_label(state):
-    """Update the theme toggle button label based on current theme."""
-    if state.get('theme', 'light') == 'light':
-        return "🌙 Dark Mode"
-    else:
-        return "☀️ Light Mode"
-
 
 
 # ============================================================================
