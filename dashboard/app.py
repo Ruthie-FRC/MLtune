@@ -314,7 +314,7 @@ def create_coefficients_view():
         
         # Individual coefficient cards with full controls
         html.Div([
-            html.Div(className="card", style={'marginBottom': '12px', 'backgroundColor': 'var(--accent-subtle)' if coeff == 'kDragCoefficient' else 'var(--bg-primary)'}, children=[
+            html.Div(id={'type': 'coeff-card', 'index': coeff}, className="card", style={'marginBottom': '12px'}, children=[
                 # Header row with coefficient name and jump button
                 html.Div(style={'display': 'flex', 'justifyContent': 'space-between', 'alignItems': 'center', 'marginBottom': '12px'}, children=[
                     html.Div([
@@ -836,7 +836,7 @@ def create_workflow_view():
             html.Div("Tuning Session Management", className="card-header"),
             html.Div([
                 html.Label("Session Name:", style={'fontWeight': 'bold'}),
-                dbc.Input(type="text", value="Competition Practice 2024", id='session-name', placeholder="Enter session name"),
+                dbc.Input(type="text", value=f"Tuning session {datetime.now().strftime('%m/%d/%Y at %H:%M')}", id='session-name', placeholder="Enter session name"),
                 html.Br(),
                 html.Label("Session Notes:", style={'fontWeight': 'bold'}),
                 dbc.Textarea(id='session-notes', placeholder="Notes about this tuning session...", style={'height': '100px'}),
@@ -1689,11 +1689,11 @@ def update_view(clicks, sidebar_class):
 def toggle_sidebar(n_clicks, current_class):
     """Toggle sidebar collapsed state."""
     if n_clicks:
-        if 'collapsed' in current_class:
+        if current_class and 'collapsed' in current_class:
             return 'sidebar'
         else:
             return 'sidebar collapsed'
-    return current_class
+    return current_class or 'sidebar'
 
 
 @app.callback(
@@ -2194,6 +2194,31 @@ def update_pin_button_appearance(state, button_id):
     else:
         # Coefficient is not pinned - show as default gray
         return "📌", {}, "Click to pin this value"
+
+
+@app.callback(
+    Output({'type': 'coeff-card', 'index': MATCH}, 'style'),
+    [Input('app-state', 'data')],
+    [State({'type': 'coeff-card', 'index': MATCH}, 'id')],
+    prevent_initial_call=False
+)
+def update_coefficient_card_highlight(state, card_id):
+    """Update coefficient card background to highlight the currently active coefficient."""
+    if not card_id or not isinstance(card_id, dict):
+        return {'marginBottom': '12px'}
+    
+    coeff_name = card_id.get('index')
+    if not coeff_name:
+        return {'marginBottom': '12px'}
+    
+    current_coeff = state.get('current_coefficient', 'kDragCoefficient')
+    
+    if coeff_name == current_coeff:
+        # Highlight the current coefficient
+        return {'marginBottom': '12px', 'backgroundColor': 'var(--accent-subtle)'}
+    else:
+        # Default background
+        return {'marginBottom': '12px', 'backgroundColor': 'var(--bg-primary)'}
 
 
 @app.callback(

@@ -102,14 +102,14 @@ body {
 
 .sidebar.collapsed {
     transform: translateX(-176px);
-    width: 64px;
 }
 
 /* Keep toggle button visible and centered when sidebar is collapsed */
 .sidebar.collapsed #sidebar-toggle {
-    position: absolute;
-    left: 184px; /* 176px offset + 8px margin to center in the visible 64px area */
-    top: 8px;
+    position: fixed;
+    left: 8px;
+    top: 68px;
+    z-index: 1000;
 }
 
 .sidebar-menu-item {
