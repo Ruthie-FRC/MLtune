@@ -469,46 +469,23 @@ def create_graphs_view():
                 dcc.Graph(
                     id='chart-success-rate',
                     figure=go.Figure(
-                        data=[
-                            go.Scatter(
-                                x=[1,2,3,4,5,6,7,8,9,10],
-                                y=[0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.78, 0.8, 0.82, 0.85],
-                                mode='lines+markers',
-                                name='Success Rate',
-                                line={'color': '#FF8C00', 'width': 3},
-                                marker={'size': 8},
-                                customdata=[
-                                    ['Drag: 0.003', 'Gravity: 9.81', 'Height: 1.0', 'Target: 2.4', 'Angle: 45', 'RPM: 5000', 'Velocity: 15'],
-                                    ['Drag: 0.0032', 'Gravity: 9.80', 'Height: 1.02', 'Target: 2.4', 'Angle: 46', 'RPM: 5100', 'Velocity: 15.2'],
-                                    ['Drag: 0.0035', 'Gravity: 9.81', 'Height: 1.05', 'Target: 2.4', 'Angle: 47', 'RPM: 5200', 'Velocity: 15.5'],
-                                    ['Drag: 0.0038', 'Gravity: 9.82', 'Height: 1.08', 'Target: 2.4', 'Angle: 48', 'RPM: 5300', 'Velocity: 15.8'],
-                                    ['Drag: 0.0040', 'Gravity: 9.81', 'Height: 1.10', 'Target: 2.4', 'Angle: 49', 'RPM: 5400', 'Velocity: 16.0'],
-                                    ['Drag: 0.0042', 'Gravity: 9.80', 'Height: 1.12', 'Target: 2.4', 'Angle: 50', 'RPM: 5500', 'Velocity: 16.2'],
-                                    ['Drag: 0.0043', 'Gravity: 9.81', 'Height: 1.14', 'Target: 2.4', 'Angle: 50', 'RPM: 5550', 'Velocity: 16.3'],
-                                    ['Drag: 0.0044', 'Gravity: 9.81', 'Height: 1.15', 'Target: 2.4', 'Angle: 51', 'RPM: 5600', 'Velocity: 16.4'],
-                                    ['Drag: 0.0045', 'Gravity: 9.81', 'Height: 1.16', 'Target: 2.4', 'Angle: 51', 'RPM: 5650', 'Velocity: 16.5'],
-                                    ['Drag: 0.0046', 'Gravity: 9.81', 'Height: 1.17', 'Target: 2.4', 'Angle: 52', 'RPM: 5700', 'Velocity: 16.6'],
-                                ],
-                                hovertemplate='<b>Shot %{x}</b><br>' +
-                                             'Success Rate: %{y:.1%}<br><br>' +
-                                             '<b>Coefficients:</b><br>' +
-                                             '%{customdata[0]}<br>' +
-                                             '%{customdata[1]}<br>' +
-                                             '%{customdata[2]}<br>' +
-                                             '%{customdata[3]}<br>' +
-                                             '%{customdata[4]}<br>' +
-                                             '%{customdata[5]}<br>' +
-                                             '%{customdata[6]}<br>' +
-                                             '<extra></extra>'
-                            )
-                        ],
+                        data=[],
                         layout=go.Layout(
                             xaxis={'title': 'Shot Number', 'gridcolor': '#e8e8e8'},
                             yaxis={'title': 'Success Rate', 'range': [0, 1], 'gridcolor': '#e8e8e8'},
                             template='plotly_white',
                             hovermode='closest',
                             plot_bgcolor='white',
-                            paper_bgcolor='white'
+                            paper_bgcolor='white',
+                            annotations=[{
+                                'text': 'No shot data available - Start tuning to see results',
+                                'xref': 'paper',
+                                'yref': 'paper',
+                                'x': 0.5,
+                                'y': 0.5,
+                                'showarrow': False,
+                                'font': {'size': 14, 'color': '#6c757d'}
+                            }]
                         )
                     )
                 )
@@ -520,20 +497,22 @@ def create_graphs_view():
                 dcc.Graph(
                     id='chart-coeff-history',
                     figure=go.Figure(
-                        data=[
-                            go.Scatter(x=[1,2,3,4,5], y=[0.003, 0.0035, 0.004, 0.0045, 0.0042], 
-                                      mode='lines+markers', name='kDragCoefficient', line={'color': '#FF8C00'}),
-                            go.Scatter(x=[1,2,3,4,5], y=[9.81, 9.8, 9.82, 9.81, 9.81], 
-                                      mode='lines+markers', name='kGravity', line={'color': '#0969da'}),
-                            go.Scatter(x=[1,2,3,4,5], y=[1.0, 1.05, 1.1, 1.08, 1.09], 
-                                      mode='lines+markers', name='kShotHeight', line={'color': '#1a7f37'}),
-                        ],
+                        data=[],
                         layout=go.Layout(
                             xaxis={'title': 'Iteration'},
                             yaxis={'title': 'Coefficient Value'},
                             template='plotly_white',
                             hovermode='x unified',
-                            legend={'orientation': 'h', 'y': -0.2}
+                            legend={'orientation': 'h', 'y': -0.2},
+                            annotations=[{
+                                'text': 'No coefficient history - Start tuning to track changes',
+                                'xref': 'paper',
+                                'yref': 'paper',
+                                'x': 0.5,
+                                'y': 0.5,
+                                'showarrow': False,
+                                'font': {'size': 14, 'color': '#6c757d'}
+                            }]
                         )
                     )
                 )
@@ -545,19 +524,20 @@ def create_graphs_view():
                 dcc.Graph(
                     id='chart-optimization-progress',
                     figure=go.Figure(
-                        data=[
-                            go.Bar(
-                                x=['kDragCoefficient', 'kGravity', 'kShotHeight', 'kTargetHeight', 'kShooterAngle', 'kShooterRPM', 'kExitVelocity'],
-                                y=[90, 85, 75, 60, 40, 20, 10],
-                                marker={'color': ['#1a7f37', '#1a7f37', '#1a7f37', '#9a6700', '#FF8C00', '#cf222e', '#cf222e']},
-                                text=['90%', '85%', '75%', '60%', '40%', '20%', '10%'],
-                                textposition='auto'
-                            )
-                        ],
+                        data=[],
                         layout=go.Layout(
                             xaxis={'title': 'Coefficient'},
                             yaxis={'title': 'Optimization Progress (%)', 'range': [0, 100]},
-                            template='plotly_white'
+                            template='plotly_white',
+                            annotations=[{
+                                'text': 'No optimization data - Run tuning to see progress',
+                                'xref': 'paper',
+                                'yref': 'paper',
+                                'x': 0.5,
+                                'y': 0.5,
+                                'showarrow': False,
+                                'font': {'size': 14, 'color': '#6c757d'}
+                            }]
                         )
                     )
                 )
@@ -569,26 +549,20 @@ def create_graphs_view():
                 dcc.Graph(
                     id='chart-shot-distribution',
                     figure=go.Figure(
-                        data=[
-                            go.Scatter(
-                                x=[1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0],
-                                y=[2.3, 2.4, 2.5, 2.5, 2.6, 2.5, 2.4, 2.3, 2.2],
-                                mode='markers',
-                                marker={
-                                    'size': 15,
-                                    'color': [1, 1, 1, 0, 1, 1, 0, 1, 1],
-                                    'colorscale': [[0, '#cf222e'], [1, '#1a7f37']],
-                                    'showscale': True,
-                                    'colorbar': {'title': 'Hit/Miss'}
-                                },
-                                text=['Hit', 'Hit', 'Hit', 'Miss', 'Hit', 'Hit', 'Miss', 'Hit', 'Hit'],
-                                hovertemplate='Distance: %{x}m<br>Height: %{y}m<br>%{text}<extra></extra>'
-                            )
-                        ],
+                        data=[],
                         layout=go.Layout(
                             xaxis={'title': 'Shot Distance (m)'},
                             yaxis={'title': 'Target Height (m)'},
-                            template='plotly_white'
+                            template='plotly_white',
+                            annotations=[{
+                                'text': 'No shot data available',
+                                'xref': 'paper',
+                                'yref': 'paper',
+                                'x': 0.5,
+                                'y': 0.5,
+                                'showarrow': False,
+                                'font': {'size': 14, 'color': '#6c757d'}
+                            }]
                         )
                     )
                 )
@@ -600,19 +574,20 @@ def create_graphs_view():
                 dcc.Graph(
                     id='chart-algorithm-comparison',
                     figure=go.Figure(
-                        data=[
-                            go.Bar(
-                                x=['GP', 'RF', 'GBRT', 'ET', 'NN'],
-                                y=[0.85, 0.82, 0.80, 0.78, 0.75],
-                                marker={'color': '#FF8C00'},
-                                text=['85%', '82%', '80%', '78%', '75%'],
-                                textposition='auto'
-                            )
-                        ],
+                        data=[],
                         layout=go.Layout(
                             xaxis={'title': 'Algorithm'},
                             yaxis={'title': 'Success Rate', 'range': [0, 1]},
-                            template='plotly_white'
+                            template='plotly_white',
+                            annotations=[{
+                                'text': 'No algorithm comparison data available',
+                                'xref': 'paper',
+                                'yref': 'paper',
+                                'x': 0.5,
+                                'y': 0.5,
+                                'showarrow': False,
+                                'font': {'size': 14, 'color': '#6c757d'}
+                            }]
                         )
                     )
                 )
@@ -624,26 +599,19 @@ def create_graphs_view():
                 dcc.Graph(
                     id='chart-convergence',
                     figure=go.Figure(
-                        data=[
-                            go.Scatter(
-                                x=list(range(1, 31)),
-                                y=[0.5, 0.48, 0.45, 0.43, 0.40, 0.38, 0.36, 0.35, 0.34, 0.33,
-                                   0.32, 0.31, 0.30, 0.29, 0.285, 0.28, 0.275, 0.27, 0.268, 0.266,
-                                   0.265, 0.264, 0.263, 0.262, 0.261, 0.260, 0.260, 0.260, 0.260, 0.260],
-                                mode='lines+markers',
-                                name='Best Value',
-                                line={'color': '#1a7f37', 'width': 2}
-                            )
-                        ],
+                        data=[],
                         layout=go.Layout(
                             xaxis={'title': 'Iteration'},
                             yaxis={'title': 'Objective Function Value'},
                             template='plotly_white',
                             annotations=[{
-                                'x': 25, 'y': 0.260,
-                                'text': 'Converged',
-                                'showarrow': True,
-                                'arrowhead': 2
+                                'text': 'No convergence data available',
+                                'xref': 'paper',
+                                'yref': 'paper',
+                                'x': 0.5,
+                                'y': 0.5,
+                                'showarrow': False,
+                                'font': {'size': 14, 'color': '#6c757d'}
                             }]
                         )
                     )
