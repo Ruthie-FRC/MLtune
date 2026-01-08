@@ -1227,21 +1227,22 @@ def create_robot_status_view():
             dcc.Graph(
                 id='robot-battery-graph',
                 figure=go.Figure(
-                    data=[
-                        go.Scatter(
-                            x=list(range(60)),
-                            y=[12.4 + (i % 10) * 0.01 for i in range(60)],
-                            mode='lines',
-                            name='Battery Voltage',
-                            line={'color': '#1a7f37', 'width': 2}
-                        )
-                    ],
+                    data=[],
                     layout=go.Layout(
                         title='Battery Voltage (Last 60s)',
                         xaxis={'title': 'Time (seconds ago)', 'autorange': 'reversed'},
                         yaxis={'title': 'Voltage (V)', 'range': [11, 13]},
                         template='plotly_white',
-                        height=300
+                        height=300,
+                        annotations=[{
+                            'text': 'No data available - Robot disconnected',
+                            'xref': 'paper',
+                            'yref': 'paper',
+                            'x': 0.5,
+                            'y': 0.5,
+                            'showarrow': False,
+                            'font': {'size': 14, 'color': '#6c757d'}
+                        }]
                     )
                 )
             ),
@@ -1250,18 +1251,22 @@ def create_robot_status_view():
             dcc.Graph(
                 id='robot-resources-graph',
                 figure=go.Figure(
-                    data=[
-                        go.Scatter(x=list(range(60)), y=[30 + (i % 20) for i in range(60)], 
-                                  mode='lines', name='CPU %', line={'color': '#0969da'}),
-                        go.Scatter(x=list(range(60)), y=[50 + (i % 15) for i in range(60)], 
-                                  mode='lines', name='Memory %', line={'color': '#9a6700'}),
-                    ],
+                    data=[],
                     layout=go.Layout(
                         title='CPU & Memory Usage (Last 60s)',
                         xaxis={'title': 'Time (seconds ago)', 'autorange': 'reversed'},
                         yaxis={'title': 'Usage (%)', 'range': [0, 100]},
                         template='plotly_white',
-                        height=300
+                        height=300,
+                        annotations=[{
+                            'text': 'No data available - Robot disconnected',
+                            'xref': 'paper',
+                            'yref': 'paper',
+                            'x': 0.5,
+                            'y': 0.5,
+                            'showarrow': False,
+                            'font': {'size': 14, 'color': '#6c757d'}
+                        }]
                     )
                 )
             ),
