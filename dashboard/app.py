@@ -2056,7 +2056,7 @@ def handle_jump_to_buttons(clicks, state):
     prevent_initial_call=True
 )
 def handle_pin_coefficient_buttons(clicks, slider_values, state):
-    """Handle pin coefficient buttons to save current values."""
+    """Handle pin coefficient buttons to toggle pin/unpin for current values."""
     ctx = callback_context
     if not ctx.triggered or not any(clicks):
         return state
@@ -2072,18 +2072,22 @@ def handle_pin_coefficient_buttons(clicks, slider_values, state):
                 coeff_index = COEFFICIENT_NAMES.index(coeff_name)
                 current_value = slider_values[coeff_index]
                 
-                # Store pinned value in state
+                # Initialize pinned_values if needed
                 if 'pinned_values' not in state:
                     state['pinned_values'] = {}
                 
-                state['pinned_values'][coeff_name] = {
-                    'value': current_value,
-                    'timestamp': datetime.now().strftime('%I:%M:%S %p')
-                }
-                
-                print(f"📌 Pinned {coeff_name} = {current_value}")
+                # Toggle: if already pinned, unpin it; otherwise pin it
+                if coeff_name in state['pinned_values']:
+                    del state['pinned_values'][coeff_name]
+                    print(f"🔓 Unpinned {coeff_name}")
+                else:
+                    state['pinned_values'][coeff_name] = {
+                        'value': current_value,
+                        'timestamp': datetime.now().strftime('%I:%M:%S %p')
+                    }
+                    print(f"📌 Pinned {coeff_name} = {current_value}")
         except (json.JSONDecodeError, KeyError, TypeError, IndexError) as e:
-            print(f"Error pinning coefficient: {e}")
+            print(f"Error toggling pin for coefficient: {e}")
     
     return state
 
@@ -2115,9 +2119,12 @@ def update_pinned_values_display(state):
                             html.Span(coeff_name, style={'fontWeight': 'bold', 'marginRight': '8px'}),
                             html.Span(f"= {pin_data['value']}", style={'color': 'var(--accent-primary)', 'fontWeight': 'bold'}),
                         ]),
-                        html.Div([
+                        html.Div(style={'display': 'flex', 'gap': '8px', 'alignItems': 'center'}, children=[
                             html.Small(f"Pinned at {pin_data['timestamp']}", 
-                                     style={'fontSize': '11px', 'color': 'var(--text-secondary)'})
+                                     style={'fontSize': '11px', 'color': 'var(--text-secondary)', 'marginRight': '8px'}),
+                            dbc.Button("🗑️", id={'type': 'unpin-coeff-btn', 'index': coeff_name}, 
+                                     size="sm", className="btn-secondary", title="Unpin this coefficient",
+                                     style={'padding': '2px 8px', 'fontSize': '12px'})
                         ])
                     ])
                 ]
@@ -2125,6 +2132,60 @@ def update_pinned_values_display(state):
         )
     
     return pinned_cards
+
+
+@app.callback(
+    Output('app-state', 'data', allow_duplicate=True),
+    [Input({'type': 'unpin-coeff-btn', 'index': ALL}, 'n_clicks')],
+    [State('app-state', 'data')],
+    prevent_initial_call=True
+)
+def handle_unpin_coefficient_buttons(clicks, state):
+    """Handle unpin buttons to remove individual pinned coefficients."""
+    ctx = callback_context
+    if not ctx.triggered or not any(clicks):
+        return state
+    
+    triggered_id = ctx.triggered[0]['prop_id'].split('.')[0]
+    if triggered_id:
+        try:
+            button_data = json.loads(triggered_id)
+            coeff_name = button_data.get('index')
+            
+            # Remove from pinned values if it exists
+            if 'pinned_values' in state and coeff_name in state['pinned_values']:
+                del state['pinned_values'][coeff_name]
+                print(f"🗑️ Unpinned {coeff_name}")
+        except (json.JSONDecodeError, KeyError, TypeError) as e:
+            print(f"Error unpinning coefficient: {e}")
+    
+    return state
+
+
+@app.callback(
+    [Output({'type': 'pin-coeff-btn', 'index': MATCH}, 'children'),
+     Output({'type': 'pin-coeff-btn', 'index': MATCH}, 'style'),
+     Output({'type': 'pin-coeff-btn', 'index': MATCH}, 'title')],
+    [Input('app-state', 'data')],
+    [State({'type': 'pin-coeff-btn', 'index': MATCH}, 'id')],
+    prevent_initial_call=False
+)
+def update_pin_button_appearance(state, button_id):
+    """Update pin button appearance based on whether coefficient is pinned."""
+    coeff_name = button_id.get('index') if button_id else None
+    pinned_values = state.get('pinned_values', {})
+    
+    if coeff_name and coeff_name in pinned_values:
+        # Coefficient is pinned - show as orange/pinned
+        return "📌", {
+            'backgroundColor': '#ff6b35',
+            'borderColor': '#ff6b35',
+            'color': 'white',
+            'fontWeight': 'bold'
+        }, f"Click to unpin {coeff_name}"
+    else:
+        # Coefficient is not pinned - show as default gray
+        return "📌", {}, "Click to pin this value"
 
 
 @app.callback(
@@ -2422,6 +2483,7 @@ def handle_danger_zone_buttons(reconfig_clicks, restore_clicks, lock_clicks, exp
         state['success_rate'] = 0.0
     elif button_id == 'clear-pinned-btn':
         print("🧹 Clearing All Pinned Data...")
+        state['pinned_values'] = {}
     elif button_id == 'emergency-stop-btn':
         print("🔥 EMERGENCY STOP!")
         state['tuner_enabled'] = False
