@@ -475,8 +475,6 @@ def create_graphs_view():
                             yaxis={'title': 'Success Rate', 'range': [0, 1], 'gridcolor': '#e8e8e8'},
                             template='plotly_white',
                             hovermode='closest',
-                            plot_bgcolor='white',
-                            paper_bgcolor='white',
                             annotations=[{
                                 'text': 'No shot data available - Start tuning to see results',
                                 'xref': 'paper',
