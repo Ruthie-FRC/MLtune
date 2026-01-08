@@ -90,6 +90,7 @@ app_state = {
     'coefficient_values': {},
     'selected_algorithm': 'gp',
     'shot_count': 0,
+    'total_hits': 0,
     'success_rate': 0.0,
     'connection_status': 'disconnected'
 }
@@ -199,6 +200,40 @@ def create_dashboard_view():
         html.Div(className='dashboard-grid', children=[
             # Left column - Quick actions and status
             html.Div([
+                # Shot Recording - Prominent HIT/MISS buttons
+                html.Div(className="card", children=[
+                    html.Div("Record Shot Result", className="card-header"),
+                    html.P("Record whether the shot hit or missed the target", style={'fontSize': '14px', 'color': 'var(--text-secondary)', 'marginBottom': '12px'}),
+                    html.Div(style={'display': 'flex', 'flexDirection': 'column', 'gap': '12px'}, children=[
+                        dbc.Button(
+                            "✓ HIT", 
+                            id='record-hit-btn', 
+                            style={
+                                'width': '100%', 
+                                'padding': '20px', 
+                                'fontSize': '24px', 
+                                'fontWeight': 'bold',
+                                'backgroundColor': '#1a7f37',
+                                'borderColor': '#1a7f37',
+                                'color': 'white'
+                            }
+                        ),
+                        dbc.Button(
+                            "✗ MISS", 
+                            id='record-miss-btn',
+                            style={
+                                'width': '100%', 
+                                'padding': '20px', 
+                                'fontSize': '24px', 
+                                'fontWeight': 'bold',
+                                'backgroundColor': '#cf222e',
+                                'borderColor': '#cf222e',
+                                'color': 'white'
+                            }
+                        ),
+                    ])
+                ]),
+                
                 # Quick actions card
                 html.Div(className="card", children=[
                     html.Div("Quick Actions", className="card-header"),
@@ -1414,6 +1449,66 @@ def handle_fine_tuning_buttons(up_clicks, down_clicks, reset_clicks, state):
         print("⬇️ Fine Tune Down")
     elif button_id == 'fine-tune-reset-btn':
         print("🔄 Fine Tune Reset")
+    
+    return state
+
+
+@app.callback(
+    Output('app-state', 'data', allow_duplicate=True),
+    [Input('record-hit-btn', 'n_clicks'),
+     Input('record-miss-btn', 'n_clicks')],
+    [State('app-state', 'data'),
+     State({'type': 'coeff-slider', 'index': ALL}, 'value')],
+    prevent_initial_call=True
+)
+def handle_shot_recording(hit_clicks, miss_clicks, state, coeff_values):
+    """
+    Handle HIT/MISS button clicks to record shot results.
+    
+    Records the shot outcome along with current coefficient values at the moment
+    the shot was taken (data comes from robot via NetworkTables, not from when
+    button is pressed).
+    """
+    ctx = callback_context
+    if not ctx.triggered:
+        return state
+    
+    button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+    
+    # Get current coefficient values
+    coefficients = ['kDragCoefficient', 'kGravity', 'kShotHeight', 'kTargetHeight', 
+                    'kShooterAngle', 'kShooterRPM', 'kExitVelocity']
+    current_coeffs = {}
+    for i, coeff_name in enumerate(coefficients):
+        if i < len(coeff_values):
+            current_coeffs[coeff_name] = coeff_values[i]
+    
+    if button_id == 'record-hit-btn':
+        state['shot_count'] = state.get('shot_count', 0) + 1
+        hits = state.get('total_hits', 0) + 1
+        state['total_hits'] = hits
+        state['success_rate'] = hits / state['shot_count']
+        
+        print(f"✓ HIT recorded! Shot #{state['shot_count']}")
+        print(f"  Coefficients: {current_coeffs}")
+        print(f"  Success Rate: {state['success_rate']:.1%}")
+        
+        # In real implementation, this would send data to ML backend via NetworkTables
+        # The robot would have already captured the shot data at fire time
+        
+    elif button_id == 'record-miss-btn':
+        state['shot_count'] = state.get('shot_count', 0) + 1
+        hits = state.get('total_hits', 0)
+        state['success_rate'] = hits / state['shot_count'] if state['shot_count'] > 0 else 0.0
+        
+        print(f"✗ MISS recorded! Shot #{state['shot_count']}")
+        print(f"  Coefficients: {current_coeffs}")
+        print(f"  Success Rate: {state['success_rate']:.1%}")
+        
+        # In real implementation, this would send data to ML backend via NetworkTables
+        # The robot would have already captured the shot data at fire time
+    
+    return state
     
     return state
 
