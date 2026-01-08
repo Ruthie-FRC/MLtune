@@ -2172,13 +2172,21 @@ def handle_unpin_coefficient_buttons(clicks, state):
 )
 def update_pin_button_appearance(state, button_id):
     """Update pin button appearance based on whether coefficient is pinned."""
-    coeff_name = button_id.get('index') if button_id else None
+    # Safely get coefficient name from button_id
+    if not button_id or not isinstance(button_id, dict):
+        return "📌", {}, "Click to pin this value"
+    
+    coeff_name = button_id.get('index')
+    if not coeff_name:
+        return "📌", {}, "Click to pin this value"
+    
     pinned_values = state.get('pinned_values', {})
     
-    if coeff_name and coeff_name in pinned_values:
+    if coeff_name in pinned_values:
         # Coefficient is pinned - show as orange/pinned
+        # Using inline style since we can't access CSS variables in style dict
         return "📌", {
-            'backgroundColor': '#ff6b35',
+            'backgroundColor': '#ff6b35',  # Orange accent color
             'borderColor': '#ff6b35',
             'color': 'white',
             'fontWeight': 'bold'
