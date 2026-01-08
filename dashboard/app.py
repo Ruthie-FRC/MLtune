@@ -272,10 +272,10 @@ def create_dashboard_view():
                 # Fine tuning controls
                 html.Div(className="card", style={'marginBottom': '12px'}, children=[
                     html.Div("Fine Tuning Controls", className="card-header"),
-                    html.Div(style={'display': 'flex', 'flexDirection': 'column', 'gap': '6px', 'alignItems': 'center'}, children=[
-                        dbc.Button("⬆ Up", id='fine-tune-up-btn', className="btn-secondary", style={'width': '140px', 'padding': '6px', 'fontSize': '13px'}),
-                        dbc.Button("Reset", id='fine-tune-reset-btn', className="btn-secondary", style={'width': '140px', 'padding': '6px', 'fontSize': '13px'}),
-                        dbc.Button("⬇ Down", id='fine-tune-down-btn', className="btn-secondary", style={'width': '140px', 'padding': '6px', 'fontSize': '13px'}),
+                    html.Div(style={'display': 'flex', 'flexDirection': 'row', 'gap': '8px', 'justifyContent': 'center'}, children=[
+                        dbc.Button("⬆ Up", id='fine-tune-up-btn', className="btn-secondary", style={'flex': '1', 'maxWidth': '100px', 'padding': '6px', 'fontSize': '13px'}),
+                        dbc.Button("Reset", id='fine-tune-reset-btn', className="btn-secondary", style={'flex': '1', 'maxWidth': '100px', 'padding': '6px', 'fontSize': '13px'}),
+                        dbc.Button("⬇ Down", id='fine-tune-down-btn', className="btn-secondary", style={'flex': '1', 'maxWidth': '100px', 'padding': '6px', 'fontSize': '13px'}),
                     ])
                 ]),
                 
