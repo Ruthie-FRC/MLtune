@@ -471,9 +471,9 @@ def create_graphs_view():
                     figure=go.Figure(
                         data=[],
                         layout=go.Layout(
-                            xaxis={'title': 'Shot Number', 'gridcolor': '#e8e8e8'},
-                            yaxis={'title': 'Success Rate', 'range': [0, 1], 'gridcolor': '#e8e8e8'},
-                            template='plotly_white',
+                            xaxis={'title': 'Shot Number'},
+                            yaxis={'title': 'Success Rate', 'range': [0, 1]},
+                            template='plotly',
                             hovermode='closest',
                             annotations=[{
                                 'text': 'No shot data available - Start tuning to see results',
@@ -482,7 +482,7 @@ def create_graphs_view():
                                 'x': 0.5,
                                 'y': 0.5,
                                 'showarrow': False,
-                                'font': {'size': 14, 'color': '#6c757d'}
+                                'font': {'size': 14}
                             }]
                         )
                     )
@@ -499,7 +499,7 @@ def create_graphs_view():
                         layout=go.Layout(
                             xaxis={'title': 'Iteration'},
                             yaxis={'title': 'Coefficient Value'},
-                            template='plotly_white',
+                            template='plotly',
                             hovermode='x unified',
                             legend={'orientation': 'h', 'y': -0.2},
                             annotations=[{
@@ -509,7 +509,7 @@ def create_graphs_view():
                                 'x': 0.5,
                                 'y': 0.5,
                                 'showarrow': False,
-                                'font': {'size': 14, 'color': '#6c757d'}
+                                'font': {'size': 14}
                             }]
                         )
                     )
@@ -526,7 +526,7 @@ def create_graphs_view():
                         layout=go.Layout(
                             xaxis={'title': 'Coefficient'},
                             yaxis={'title': 'Optimization Progress (%)', 'range': [0, 100]},
-                            template='plotly_white',
+                            template='plotly',
                             annotations=[{
                                 'text': 'No optimization data - Run tuning to see progress',
                                 'xref': 'paper',
@@ -534,7 +534,7 @@ def create_graphs_view():
                                 'x': 0.5,
                                 'y': 0.5,
                                 'showarrow': False,
-                                'font': {'size': 14, 'color': '#6c757d'}
+                                'font': {'size': 14}
                             }]
                         )
                     )
@@ -551,7 +551,7 @@ def create_graphs_view():
                         layout=go.Layout(
                             xaxis={'title': 'Shot Distance (m)'},
                             yaxis={'title': 'Target Height (m)'},
-                            template='plotly_white',
+                            template='plotly',
                             annotations=[{
                                 'text': 'No shot data available',
                                 'xref': 'paper',
@@ -559,7 +559,7 @@ def create_graphs_view():
                                 'x': 0.5,
                                 'y': 0.5,
                                 'showarrow': False,
-                                'font': {'size': 14, 'color': '#6c757d'}
+                                'font': {'size': 14}
                             }]
                         )
                     )
@@ -576,7 +576,7 @@ def create_graphs_view():
                         layout=go.Layout(
                             xaxis={'title': 'Algorithm'},
                             yaxis={'title': 'Success Rate', 'range': [0, 1]},
-                            template='plotly_white',
+                            template='plotly',
                             annotations=[{
                                 'text': 'No algorithm comparison data available',
                                 'xref': 'paper',
@@ -584,7 +584,7 @@ def create_graphs_view():
                                 'x': 0.5,
                                 'y': 0.5,
                                 'showarrow': False,
-                                'font': {'size': 14, 'color': '#6c757d'}
+                                'font': {'size': 14}
                             }]
                         )
                     )
@@ -601,7 +601,7 @@ def create_graphs_view():
                         layout=go.Layout(
                             xaxis={'title': 'Iteration'},
                             yaxis={'title': 'Objective Function Value'},
-                            template='plotly_white',
+                            template='plotly',
                             annotations=[{
                                 'text': 'No convergence data available',
                                 'xref': 'paper',
@@ -609,7 +609,7 @@ def create_graphs_view():
                                 'x': 0.5,
                                 'y': 0.5,
                                 'showarrow': False,
-                                'font': {'size': 14, 'color': '#6c757d'}
+                                'font': {'size': 14}
                             }]
                         )
                     )
@@ -644,7 +644,7 @@ def create_graphs_view():
                         layout=go.Layout(
                             xaxis={'title': 'Shooter Angle'},
                             yaxis={'title': 'Distance'},
-                            template='plotly_white'
+                            template='plotly'
                         )
                     )
                 )
@@ -668,7 +668,7 @@ def create_graphs_view():
                         layout=go.Layout(
                             xaxis={'title': 'Exit Velocity (m/s)'},
                             yaxis={'title': 'Frequency'},
-                            template='plotly_white',
+                            template='plotly',
                             showlegend=False
                         )
                     )
@@ -1198,7 +1198,7 @@ def create_robot_status_view():
                         title='Battery Voltage (Last 60s)',
                         xaxis={'title': 'Time (seconds ago)', 'autorange': 'reversed'},
                         yaxis={'title': 'Voltage (V)', 'range': [11, 13]},
-                        template='plotly_white',
+                        template='plotly',
                         height=300,
                         annotations=[{
                             'text': 'No data available - Robot disconnected',
@@ -1207,7 +1207,7 @@ def create_robot_status_view():
                             'x': 0.5,
                             'y': 0.5,
                             'showarrow': False,
-                            'font': {'size': 14, 'color': '#6c757d'}
+                            'font': {'size': 14}
                         }]
                     )
                 )
@@ -1222,7 +1222,7 @@ def create_robot_status_view():
                         title='CPU & Memory Usage (Last 60s)',
                         xaxis={'title': 'Time (seconds ago)', 'autorange': 'reversed'},
                         yaxis={'title': 'Usage (%)', 'range': [0, 100]},
-                        template='plotly_white',
+                        template='plotly',
                         height=300,
                         annotations=[{
                             'text': 'No data available - Robot disconnected',
@@ -1231,7 +1231,7 @@ def create_robot_status_view():
                             'x': 0.5,
                             'y': 0.5,
                             'showarrow': False,
-                            'font': {'size': 14, 'color': '#6c757d'}
+                            'font': {'size': 14}
                         }]
                     )
                 )

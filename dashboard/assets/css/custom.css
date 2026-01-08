@@ -207,13 +207,14 @@ body {
 
 /* Cards */
 .card {
-    background-color: var(--bg-primary);
+    background-color: var(--bg-secondary);
     border: 1px solid var(--border-default);
     border-radius: 6px;
     padding: var(--space-sm);
     margin-bottom: var(--space-sm);
     box-shadow: var(--shadow-sm);
     transition: box-shadow 150ms ease;
+    color: var(--text-primary);
 }
 
 .card:hover {
@@ -227,6 +228,21 @@ body {
     color: var(--text-primary);
     padding-bottom: var(--space-xs);
     border-bottom: 1px solid var(--border-muted);
+}
+
+/* Force all text to respect theme */
+p, span, div, label, h1, h2, h3, h4, h5, h6 {
+    color: var(--text-primary);
+}
+
+small, .text-secondary {
+    color: var(--text-secondary) !important;
+}
+
+/* Force all containers to respect theme */
+#page-content, .main-content, [data-dash-is-loading] {
+    background-color: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
 }
 
 /* Buttons */
