@@ -40,6 +40,7 @@ from datetime import datetime
 import json
 import sys
 import os
+import time
 from pathlib import Path
 
 # Add parent directory to path for tuner imports
@@ -47,7 +48,8 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "MLtune" / "tuner"))
 
 try:
     from config import TunerConfig
-    from nt_interface import NetworkTablesInterface
+    from nt_interface import NetworkTablesInterface, ShotData
+    from tuner import BayesianTunerCoordinator
     TUNER_AVAILABLE = True
 except ImportError:
     TUNER_AVAILABLE = False
@@ -81,6 +83,16 @@ app.index_string = '''
     </body>
 </html>
 '''
+
+# Global tuner coordinator instance (only if tuner is available)
+tuner_coordinator = None
+if TUNER_AVAILABLE:
+    try:
+        tuner_coordinator = BayesianTunerCoordinator()
+        print("✓ Tuner coordinator initialized")
+    except Exception as e:
+        print(f"Warning: Could not initialize tuner coordinator: {e}")
+        TUNER_AVAILABLE = False
 
 # Global state management
 app_state = {
@@ -171,6 +183,7 @@ def create_sidebar():
             html.Div([
                 html.Button("Dashboard", id={'type': 'nav-btn', 'index': 'dashboard'}, className="sidebar-menu-item active"),
                 html.Button("Coefficients", id={'type': 'nav-btn', 'index': 'coefficients'}, className="sidebar-menu-item"),
+                html.Button("Workflow", id={'type': 'nav-btn', 'index': 'workflow'}, className="sidebar-menu-item"),
                 html.Button("Graphs", id={'type': 'nav-btn', 'index': 'graphs'}, className="sidebar-menu-item"),
                 html.Button("Settings", id={'type': 'nav-btn', 'index': 'settings'}, className="sidebar-menu-item"),
                 html.Button("Robot Status", id={'type': 'nav-btn', 'index': 'robot'}, className="sidebar-menu-item"),
@@ -1295,7 +1308,7 @@ def update_view(clicks, sidebar_class):
     default_view = 'dashboard'
 
     # Sidebar button indices in the same order as create_sidebar
-    nav_indices = ['dashboard', 'coefficients', 'graphs', 'settings', 'robot', 'logs', 'help']
+    nav_indices = ['dashboard', 'coefficients', 'workflow', 'graphs', 'settings', 'robot', 'logs', 'help']
 
     if not ctx.triggered:
         content = create_dashboard_view()
@@ -1373,7 +1386,7 @@ def toggle_sidebar(n_clicks, current_class):
     prevent_initial_call=True
 )
 def handle_core_control_buttons(start_clicks, stop_clicks, run_clicks, skip_clicks, state):
-    """Handle core control button clicks."""
+    """Handle core control button clicks and actually control the tuner."""
     ctx = callback_context
     if not ctx.triggered:
         return state
@@ -1383,15 +1396,48 @@ def handle_core_control_buttons(start_clicks, stop_clicks, run_clicks, skip_clic
     if button_id == 'start-tuner-btn':
         state['tuner_enabled'] = True
         print("✅ Tuner Started")
+        if tuner_coordinator:
+            try:
+                tuner_coordinator.start()
+                print("✓ Tuner coordinator thread started")
+            except Exception as e:
+                print(f"Error starting tuner: {e}")
+        
     elif button_id == 'stop-tuner-btn':
         state['tuner_enabled'] = False
         print("⛔ Tuner Stopped")
+        if tuner_coordinator:
+            try:
+                tuner_coordinator.stop()
+                print("✓ Tuner coordinator thread stopped")
+            except Exception as e:
+                print(f"Error stopping tuner: {e}")
+        
     elif button_id == 'run-optimization-btn':
         print("🔄 Running Optimization...")
-        # In a real implementation, this would trigger the optimization
+        if tuner_coordinator:
+            try:
+                tuner_coordinator.trigger_optimization()
+                print("✓ Optimization triggered")
+            except Exception as e:
+                print(f"Error triggering optimization: {e}")
+        else:
+            print("⚠️ Tuner not available - running in demo mode")
+        
     elif button_id == 'skip-coefficient-btn':
         print("⏭️ Skipping to Next Coefficient")
-        # In a real implementation, this would advance to the next coefficient
+        if tuner_coordinator and tuner_coordinator.optimizer:
+            try:
+                tuner_coordinator.optimizer.advance_to_next_coefficient()
+                # Update state to reflect the new coefficient
+                current_coeff = tuner_coordinator.optimizer.get_current_coefficient_name()
+                if current_coeff:
+                    state['current_coefficient'] = current_coeff
+                print(f"✓ Advanced to next coefficient: {current_coeff}")
+            except Exception as e:
+                print(f"Error skipping coefficient: {e}")
+        else:
+            print("⚠️ Tuner not available - running in demo mode")
     
     return state
 
@@ -1465,9 +1511,8 @@ def handle_shot_recording(hit_clicks, miss_clicks, state, coeff_values):
     """
     Handle HIT/MISS button clicks to record shot results.
     
-    Records the shot outcome along with current coefficient values at the moment
-    the shot was taken (data comes from robot via NetworkTables, not from when
-    button is pressed).
+    Records the shot outcome along with current coefficient values and sends
+    to the tuner backend for Bayesian optimization.
     """
     ctx = callback_context
     if not ctx.triggered:
@@ -1483,32 +1528,51 @@ def handle_shot_recording(hit_clicks, miss_clicks, state, coeff_values):
         if i < len(coeff_values):
             current_coeffs[coeff_name] = coeff_values[i]
     
-    if button_id == 'record-hit-btn':
-        state['shot_count'] = state.get('shot_count', 0) + 1
+    # Determine if hit or miss
+    hit = (button_id == 'record-hit-btn')
+    
+    # Update local state
+    state['shot_count'] = state.get('shot_count', 0) + 1
+    if hit:
         hits = state.get('total_hits', 0) + 1
         state['total_hits'] = hits
-        state['success_rate'] = hits / state['shot_count']
-        
-        print(f"✓ HIT recorded! Shot #{state['shot_count']}")
-        print(f"  Coefficients: {current_coeffs}")
-        print(f"  Success Rate: {state['success_rate']:.1%}")
-        
-        # In real implementation, this would send data to ML backend via NetworkTables
-        # The robot would have already captured the shot data at fire time
-        
-    elif button_id == 'record-miss-btn':
-        state['shot_count'] = state.get('shot_count', 0) + 1
+    else:
         hits = state.get('total_hits', 0)
-        state['success_rate'] = hits / state['shot_count'] if state['shot_count'] > 0 else 0.0
-        
-        print(f"✗ MISS recorded! Shot #{state['shot_count']}")
-        print(f"  Coefficients: {current_coeffs}")
-        print(f"  Success Rate: {state['success_rate']:.1%}")
-        
-        # In real implementation, this would send data to ML backend via NetworkTables
-        # The robot would have already captured the shot data at fire time
+    state['success_rate'] = hits / state['shot_count'] if state['shot_count'] > 0 else 0.0
     
-    return state
+    # Log to console
+    result_str = "✓ HIT" if hit else "✗ MISS"
+    print(f"{result_str} recorded! Shot #{state['shot_count']}")
+    print(f"  Coefficients: {current_coeffs}")
+    print(f"  Success Rate: {state['success_rate']:.1%}")
+    
+    # Send to tuner backend if available
+    if tuner_coordinator and TUNER_AVAILABLE:
+        try:
+            # Create a ShotData object
+            # In real implementation, robot would provide distance, velocity, etc.
+            # For now, we create a minimal shot data with the hit/miss outcome
+            shot_data = ShotData(
+                hit=hit,
+                distance=0.0,  # Would come from robot sensors
+                shot_velocity=0.0,  # Would come from robot sensors
+                timestamp=time.time()
+            )
+            
+            # Record the shot with the tuner's optimizer
+            if tuner_coordinator.optimizer:
+                tuner_coordinator.optimizer.record_shot(shot_data, current_coeffs)
+                print(f"✓ Shot data sent to tuner backend")
+            
+            # Log the shot data
+            if tuner_coordinator.data_logger:
+                tuner_coordinator.data_logger.log_shot(shot_data, current_coeffs)
+                print(f"✓ Shot data logged")
+                
+        except Exception as e:
+            print(f"Error recording shot with tuner: {e}")
+    else:
+        print("⚠️ Tuner not available - shot recorded locally only")
     
     return state
 
