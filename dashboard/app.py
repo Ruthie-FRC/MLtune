@@ -2542,6 +2542,44 @@ def update_dashboard_displays(state):
 
 
 @app.callback(
+    [Output('robot-battery', 'children'),
+     Output('robot-battery', 'style'),
+     Output('robot-cpu', 'children'),
+     Output('robot-cpu', 'style'),
+     Output('robot-memory', 'children'),
+     Output('robot-memory', 'style'),
+     Output('robot-can', 'children'),
+     Output('robot-can', 'style'),
+     Output('robot-loop-time', 'children'),
+     Output('robot-loop-time', 'style')],
+    [Input('app-state', 'data')]
+)
+def update_robot_status_displays(state):
+    """Update robot status displays - clear when disconnected."""
+    connection_status = state.get('connection_status', 'disconnected')
+    
+    if connection_status == 'disconnected' or not connection_status or connection_status == '':
+        # Robot is disconnected - show N/A for all values
+        na_style = {'fontSize': '24px', 'fontWeight': '600', 'color': 'var(--text-secondary)'}
+        return (
+            "N/A", na_style,
+            "N/A", na_style,
+            "N/A", na_style,
+            "N/A", na_style,
+            "N/A", na_style
+        )
+    else:
+        # Robot is connected - show actual values (placeholder for now)
+        return (
+            "12.4V", {'fontSize': '24px', 'fontWeight': '600', 'color': 'var(--success)'},
+            "34%", {'fontSize': '24px', 'fontWeight': '600', 'color': 'var(--info)'},
+            "128MB", {'fontSize': '24px', 'fontWeight': '600', 'color': 'var(--info)'},
+            "42%", {'fontSize': '24px', 'fontWeight': '600', 'color': 'var(--success)'},
+            "18ms", {'fontSize': '24px', 'fontWeight': '600', 'color': 'var(--success)'}
+        )
+
+
+@app.callback(
     [Output('status-bar-time', 'children'),
      Output('status-bar-date', 'children'),
      Output('status-bar-shots', 'children'),
