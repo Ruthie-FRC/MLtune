@@ -305,6 +305,17 @@ def create_dashboard_view():
                         dbc.Button("⬇ Down", id='fine-tune-down-btn', className="btn-secondary", style={'width': '160px', 'padding': '8px'}),
                     ])
                 ]),
+                
+                # Export coefficients
+                html.Div(className="card", children=[
+                    html.Div("Export Data", className="card-header"),
+                    html.P("Export coefficient data for robot code", style={'fontSize': '14px', 'color': 'var(--text-secondary)', 'marginBottom': '12px'}),
+                    html.Div(style={'display': 'flex', 'flexDirection': 'column', 'gap': '8px'}, children=[
+                        dbc.Button("📥 Export Current Coefficients", id='export-current-coeffs-btn', className="btn-primary", style={'width': '100%', 'padding': '10px'}),
+                        dbc.Button("📊 Export All Logs (CSV)", id='export-all-logs-btn', className="btn-secondary", style={'width': '100%', 'padding': '10px'}),
+                    ]),
+                    html.Div(id='export-status', style={'marginTop': '8px', 'fontSize': '12px', 'color': 'var(--text-secondary)'})
+                ]),
             ]),
         ]),
     ])
@@ -1575,6 +1586,118 @@ def handle_shot_recording(hit_clicks, miss_clicks, state, coeff_values):
         print("⚠️ Tuner not available - shot recorded locally only")
     
     return state
+
+
+@app.callback(
+    Output('export-status', 'children'),
+    [Input('export-current-coeffs-btn', 'n_clicks'),
+     Input('export-all-logs-btn', 'n_clicks')],
+    [State({'type': 'coeff-slider', 'index': ALL}, 'value'),
+     State('app-state', 'data')],
+    prevent_initial_call=True
+)
+def handle_export_buttons(export_current_clicks, export_logs_clicks, coeff_values, state):
+    """
+    Handle export button clicks to generate CSV files.
+    
+    Creates CSV files with coefficient data that can be easily used in robot code.
+    """
+    ctx = callback_context
+    if not ctx.triggered:
+        return ""
+    
+    button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+    
+    # Get current coefficient values
+    coefficients = ['kDragCoefficient', 'kGravity', 'kShotHeight', 'kTargetHeight', 
+                    'kShooterAngle', 'kShooterRPM', 'kExitVelocity']
+    current_coeffs = {}
+    for i, coeff_name in enumerate(coefficients):
+        if i < len(coeff_values):
+            current_coeffs[coeff_name] = coeff_values[i]
+    
+    try:
+        if button_id == 'export-current-coeffs-btn':
+            # Export current coefficients to CSV
+            timestamp_str = datetime.now().strftime('%Y%m%d_%H%M%S')
+            filename = f"current_coefficients_{timestamp_str}.csv"
+            filepath = os.path.join(os.getcwd(), filename)
+            
+            with open(filepath, 'w') as f:
+                f.write("Coefficient,Value\n")
+                for coeff_name, value in current_coeffs.items():
+                    f.write(f"{coeff_name},{value}\n")
+            
+            print(f"✓ Exported current coefficients to: {filename}")
+            return f"✓ Exported to: {filename}"
+            
+        elif button_id == 'export-all-logs-btn':
+            # Export all coefficient logs with timestamps
+            timestamp_str = datetime.now().strftime('%Y%m%d_%H%M%S')
+            filename = f"coefficient_logs_{timestamp_str}.csv"
+            filepath = os.path.join(os.getcwd(), filename)
+            
+            # Try to get logs from tuner if available
+            if tuner_coordinator and tuner_coordinator.data_logger:
+                try:
+                    # Get log directory from tuner
+                    log_dir = tuner_coordinator.config.LOG_DIRECTORY if hasattr(tuner_coordinator.config, 'LOG_DIRECTORY') else 'tuner_logs'
+                    
+                    # Export from existing logs
+                    with open(filepath, 'w') as f:
+                        f.write("Timestamp,ShotNumber,Hit,")
+                        f.write(",".join(coefficients))
+                        f.write(",Distance,Velocity,SuccessRate\n")
+                        
+                        # Get shot history from tuner if available
+                        if hasattr(tuner_coordinator.optimizer, 'evaluation_history'):
+                            for i, entry in enumerate(tuner_coordinator.optimizer.evaluation_history):
+                                timestamp = entry.get('timestamp', datetime.now().isoformat())
+                                shot_num = i + 1
+                                hit = entry.get('hit', False)
+                                
+                                f.write(f"{timestamp},{shot_num},{hit},")
+                                
+                                # Write coefficient values
+                                coeffs = entry.get('coefficient_values', current_coeffs)
+                                for coeff_name in coefficients:
+                                    f.write(f"{coeffs.get(coeff_name, 0.0)},")
+                                
+                                # Write additional data
+                                additional = entry.get('additional_data', {})
+                                distance = additional.get('distance', 0.0)
+                                velocity = additional.get('velocity', 0.0)
+                                success_rate = entry.get('success_rate', 0.0)
+                                f.write(f"{distance},{velocity},{success_rate}\n")
+                    
+                    print(f"✓ Exported all logs to: {filename}")
+                    return f"✓ Exported logs to: {filename}"
+                    
+                except Exception as e:
+                    print(f"Error exporting from tuner logs: {e}")
+                    # Fallback to basic export
+            
+            # Fallback: export current state
+            with open(filepath, 'w') as f:
+                f.write("Timestamp,ShotNumber,Hit,")
+                f.write(",".join(coefficients))
+                f.write(",Distance,Velocity,SuccessRate\n")
+                
+                # Write current state as a single entry
+                f.write(f"{datetime.now().isoformat()},{state.get('shot_count', 0)},True,")
+                for coeff_name in coefficients:
+                    f.write(f"{current_coeffs.get(coeff_name, 0.0)},")
+                f.write(f"0.0,0.0,{state.get('success_rate', 0.0)}\n")
+            
+            print(f"✓ Exported current state to: {filename}")
+            return f"✓ Exported to: {filename}"
+            
+    except Exception as e:
+        error_msg = f"Error exporting data: {e}"
+        print(error_msg)
+        return f"✗ {error_msg}"
+    
+    return ""
 
 
 @app.callback(
