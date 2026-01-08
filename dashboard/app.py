@@ -214,47 +214,45 @@ def create_dashboard_view():
             # Left column - Quick actions and status
             html.Div([
                 # Export coefficients
-                html.Div(className="card", children=[
+                html.Div(className="card", style={'marginBottom': '12px'}, children=[
                     html.Div("Export Data", className="card-header"),
-                    html.P("Export coefficient data for robot code", style={'fontSize': '14px', 'color': 'var(--text-secondary)', 'marginBottom': '12px'}),
-                    html.Div(style={'display': 'flex', 'flexDirection': 'column', 'gap': '8px'}, children=[
-                        dbc.Button("📥 Export Current Coefficients", id='export-current-coeffs-btn', className="btn-primary", style={'width': '100%', 'padding': '10px'}),
-                        dbc.Button("📊 Export All Logs (CSV)", id='export-all-logs-btn', className="btn-secondary", style={'width': '100%', 'padding': '10px'}),
+                    html.Div(style={'display': 'flex', 'flexDirection': 'column', 'gap': '6px'}, children=[
+                        dbc.Button("📥 Export Current Coefficients", id='export-current-coeffs-btn', className="btn-primary", style={'width': '100%', 'padding': '8px', 'fontSize': '13px'}),
+                        dbc.Button("📊 Export All Logs (CSV)", id='export-all-logs-btn', className="btn-secondary", style={'width': '100%', 'padding': '8px', 'fontSize': '13px'}),
                     ]),
-                    html.Div(id='export-status', style={'marginTop': '8px', 'fontSize': '12px', 'color': 'var(--text-secondary)'})
+                    html.Div(id='export-status', style={'marginTop': '6px', 'fontSize': '11px', 'color': 'var(--text-secondary)'})
                 ]),
                 
                 # Quick actions card
-                html.Div(className="card", children=[
+                html.Div(className="card", style={'marginBottom': '12px'}, children=[
                     html.Div("Quick Actions", className="card-header"),
-                    html.P("Start tuning with a single click", style={'fontSize': '14px', 'color': 'var(--text-secondary)', 'marginBottom': '12px'}),
-                    html.Div(style={'display': 'flex', 'flexDirection': 'column', 'gap': '8px'}, children=[
-                        dbc.Button("Start Tuner", id='start-tuner-btn', className="btn-primary", style={'width': '100%', 'padding': '10px'}),
-                        dbc.Button("Stop Tuner", id='stop-tuner-btn', className="btn-danger", style={'width': '100%', 'padding': '10px'}),
-                        dbc.Button("Run Optimization", id='run-optimization-btn', className="btn-primary", style={'width': '100%', 'padding': '10px'}),
-                        dbc.Button("Skip Coefficient", id='skip-coefficient-btn', className="btn-secondary", style={'width': '100%', 'padding': '10px'}),
+                    html.Div(style={'display': 'flex', 'flexDirection': 'column', 'gap': '6px'}, children=[
+                        dbc.Button("Start Tuner", id='start-tuner-btn', className="btn-primary", style={'width': '100%', 'padding': '8px', 'fontSize': '13px'}),
+                        dbc.Button("Stop Tuner", id='stop-tuner-btn', className="btn-danger", style={'width': '100%', 'padding': '8px', 'fontSize': '13px'}),
+                        dbc.Button("Run Optimization", id='run-optimization-btn', className="btn-primary", style={'width': '100%', 'padding': '8px', 'fontSize': '13px'}),
+                        dbc.Button("Skip Coefficient", id='skip-coefficient-btn', className="btn-secondary", style={'width': '100%', 'padding': '8px', 'fontSize': '13px'}),
                     ])
                 ]),
                 
                 # Current status card
-                html.Div(className="card", children=[
+                html.Div(className="card", style={'marginBottom': '12px'}, children=[
                     html.Div("Current Status", className="card-header"),
-                    html.Div(style={'display': 'grid', 'gridTemplateColumns': '1fr 1fr', 'gap': '12px'}, children=[
+                    html.Div(style={'display': 'grid', 'gridTemplateColumns': '1fr 1fr', 'gap': '8px'}, children=[
                         html.Div([
-                            html.Label("Mode", style={'fontSize': '12px', 'color': 'var(--text-secondary)', 'fontWeight': '600', 'textTransform': 'uppercase'}),
-                            html.P(f"{app_state['mode'].title()}", id='mode-display', style={'fontSize': '16px', 'fontWeight': '600', 'margin': '2px 0'}),
+                            html.Label("Mode", style={'fontSize': '11px', 'color': 'var(--text-secondary)', 'fontWeight': '600', 'textTransform': 'uppercase'}),
+                            html.P(f"{app_state['mode'].title()}", id='mode-display', style={'fontSize': '14px', 'fontWeight': '600', 'margin': '2px 0'}),
                         ]),
                         html.Div([
-                            html.Label("Coefficient", style={'fontSize': '12px', 'color': 'var(--text-secondary)', 'fontWeight': '600', 'textTransform': 'uppercase'}),
-                            html.P(f"{app_state['current_coefficient']}", id='coeff-display', style={'fontSize': '16px', 'fontWeight': '600', 'margin': '2px 0'}),
+                            html.Label("Coefficient", style={'fontSize': '11px', 'color': 'var(--text-secondary)', 'fontWeight': '600', 'textTransform': 'uppercase'}),
+                            html.P(f"{app_state['current_coefficient']}", id='coeff-display', style={'fontSize': '14px', 'fontWeight': '600', 'margin': '2px 0'}),
                         ]),
                         html.Div([
-                            html.Label("Shot Count", style={'fontSize': '12px', 'color': 'var(--text-secondary)', 'fontWeight': '600', 'textTransform': 'uppercase'}),
-                            html.P(f"{app_state['shot_count']}", id='shot-display', style={'fontSize': '16px', 'fontWeight': '600', 'margin': '2px 0'}),
+                            html.Label("Shot Count", style={'fontSize': '11px', 'color': 'var(--text-secondary)', 'fontWeight': '600', 'textTransform': 'uppercase'}),
+                            html.P(f"{app_state['shot_count']}", id='shot-display', style={'fontSize': '14px', 'fontWeight': '600', 'margin': '2px 0'}),
                         ]),
                         html.Div([
-                            html.Label("Success Rate", style={'fontSize': '12px', 'color': 'var(--text-secondary)', 'fontWeight': '600', 'textTransform': 'uppercase'}),
-                            html.P(f"{app_state['success_rate']:.1%}", id='success-display', style={'fontSize': '16px', 'fontWeight': '600', 'margin': '2px 0', 'color': 'var(--success)'}),
+                            html.Label("Success Rate", style={'fontSize': '11px', 'color': 'var(--text-secondary)', 'fontWeight': '600', 'textTransform': 'uppercase'}),
+                            html.P(f"{app_state['success_rate']:.1%}", id='success-display', style={'fontSize': '14px', 'fontWeight': '600', 'margin': '2px 0', 'color': 'var(--success)'}),
                         ]),
                     ])
                 ]),
@@ -263,38 +261,35 @@ def create_dashboard_view():
             # Right column - Navigation and fine tuning
             html.Div([
                 # Coefficient navigation
-                html.Div(className="card", children=[
+                html.Div(className="card", style={'marginBottom': '12px'}, children=[
                     html.Div("Coefficient Navigation", className="card-header"),
-                    html.P("Navigate between coefficients", style={'fontSize': '14px', 'color': 'var(--text-secondary)', 'marginBottom': '12px'}),
                     html.Div(style={'display': 'flex', 'gap': '8px'}, children=[
-                        dbc.Button("◀ Previous", id='prev-coeff-btn', className="btn-secondary", style={'flex': '1', 'padding': '10px'}),
-                        dbc.Button("Next ▶", id='next-coeff-btn', className="btn-secondary", style={'flex': '1', 'padding': '10px'}),
+                        dbc.Button("◀ Previous", id='prev-coeff-btn', className="btn-secondary", style={'flex': '1', 'padding': '8px', 'fontSize': '13px'}),
+                        dbc.Button("Next ▶", id='next-coeff-btn', className="btn-secondary", style={'flex': '1', 'padding': '8px', 'fontSize': '13px'}),
                     ])
                 ]),
                 
                 # Fine tuning controls
-                html.Div(className="card", children=[
+                html.Div(className="card", style={'marginBottom': '12px'}, children=[
                     html.Div("Fine Tuning Controls", className="card-header"),
-                    html.P("Adjust current coefficient in small increments", style={'fontSize': '14px', 'color': 'var(--text-secondary)', 'marginBottom': '12px'}),
-                    html.Div(style={'display': 'flex', 'flexDirection': 'column', 'gap': '8px', 'alignItems': 'center'}, children=[
-                        dbc.Button("⬆ Up", id='fine-tune-up-btn', className="btn-secondary", style={'width': '160px', 'padding': '8px'}),
-                        dbc.Button("Reset", id='fine-tune-reset-btn', className="btn-secondary", style={'width': '160px', 'padding': '8px'}),
-                        dbc.Button("⬇ Down", id='fine-tune-down-btn', className="btn-secondary", style={'width': '160px', 'padding': '8px'}),
+                    html.Div(style={'display': 'flex', 'flexDirection': 'column', 'gap': '6px', 'alignItems': 'center'}, children=[
+                        dbc.Button("⬆ Up", id='fine-tune-up-btn', className="btn-secondary", style={'width': '140px', 'padding': '6px', 'fontSize': '13px'}),
+                        dbc.Button("Reset", id='fine-tune-reset-btn', className="btn-secondary", style={'width': '140px', 'padding': '6px', 'fontSize': '13px'}),
+                        dbc.Button("⬇ Down", id='fine-tune-down-btn', className="btn-secondary", style={'width': '140px', 'padding': '6px', 'fontSize': '13px'}),
                     ])
                 ]),
                 
                 # Shot Recording - Prominent HIT/MISS buttons
-                html.Div(className="card", children=[
+                html.Div(className="card", style={'marginBottom': '12px'}, children=[
                     html.Div("Record Shot Result", className="card-header"),
-                    html.P("Record whether the shot hit or missed the target", style={'fontSize': '14px', 'color': 'var(--text-secondary)', 'marginBottom': '12px'}),
-                    html.Div(style={'display': 'flex', 'flexDirection': 'column', 'gap': '12px'}, children=[
+                    html.Div(style={'display': 'flex', 'flexDirection': 'column', 'gap': '8px'}, children=[
                         dbc.Button(
                             "✓ HIT", 
                             id='record-hit-btn', 
                             style={
                                 'width': '100%', 
-                                'padding': '20px', 
-                                'fontSize': '24px', 
+                                'padding': '16px', 
+                                'fontSize': '20px', 
                                 'fontWeight': 'bold',
                                 'backgroundColor': '#1a7f37',
                                 'borderColor': '#1a7f37',
@@ -306,8 +301,8 @@ def create_dashboard_view():
                             id='record-miss-btn',
                             style={
                                 'width': '100%', 
-                                'padding': '20px', 
-                                'fontSize': '24px', 
+                                'padding': '16px', 
+                                'fontSize': '20px', 
                                 'fontWeight': 'bold',
                                 'backgroundColor': '#cf222e',
                                 'borderColor': '#cf222e',
