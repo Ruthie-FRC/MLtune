@@ -213,38 +213,15 @@ def create_dashboard_view():
         html.Div(className='dashboard-grid', children=[
             # Left column - Quick actions and status
             html.Div([
-                # Shot Recording - Prominent HIT/MISS buttons
+                # Export coefficients
                 html.Div(className="card", children=[
-                    html.Div("Record Shot Result", className="card-header"),
-                    html.P("Record whether the shot hit or missed the target", style={'fontSize': '14px', 'color': 'var(--text-secondary)', 'marginBottom': '12px'}),
-                    html.Div(style={'display': 'flex', 'flexDirection': 'column', 'gap': '12px'}, children=[
-                        dbc.Button(
-                            "✓ HIT", 
-                            id='record-hit-btn', 
-                            style={
-                                'width': '100%', 
-                                'padding': '20px', 
-                                'fontSize': '24px', 
-                                'fontWeight': 'bold',
-                                'backgroundColor': '#1a7f37',
-                                'borderColor': '#1a7f37',
-                                'color': 'white'
-                            }
-                        ),
-                        dbc.Button(
-                            "✗ MISS", 
-                            id='record-miss-btn',
-                            style={
-                                'width': '100%', 
-                                'padding': '20px', 
-                                'fontSize': '24px', 
-                                'fontWeight': 'bold',
-                                'backgroundColor': '#cf222e',
-                                'borderColor': '#cf222e',
-                                'color': 'white'
-                            }
-                        ),
-                    ])
+                    html.Div("Export Data", className="card-header"),
+                    html.P("Export coefficient data for robot code", style={'fontSize': '14px', 'color': 'var(--text-secondary)', 'marginBottom': '12px'}),
+                    html.Div(style={'display': 'flex', 'flexDirection': 'column', 'gap': '8px'}, children=[
+                        dbc.Button("📥 Export Current Coefficients", id='export-current-coeffs-btn', className="btn-primary", style={'width': '100%', 'padding': '10px'}),
+                        dbc.Button("📊 Export All Logs (CSV)", id='export-all-logs-btn', className="btn-secondary", style={'width': '100%', 'padding': '10px'}),
+                    ]),
+                    html.Div(id='export-status', style={'marginTop': '8px', 'fontSize': '12px', 'color': 'var(--text-secondary)'})
                 ]),
                 
                 # Quick actions card
@@ -306,15 +283,38 @@ def create_dashboard_view():
                     ])
                 ]),
                 
-                # Export coefficients
+                # Shot Recording - Prominent HIT/MISS buttons
                 html.Div(className="card", children=[
-                    html.Div("Export Data", className="card-header"),
-                    html.P("Export coefficient data for robot code", style={'fontSize': '14px', 'color': 'var(--text-secondary)', 'marginBottom': '12px'}),
-                    html.Div(style={'display': 'flex', 'flexDirection': 'column', 'gap': '8px'}, children=[
-                        dbc.Button("📥 Export Current Coefficients", id='export-current-coeffs-btn', className="btn-primary", style={'width': '100%', 'padding': '10px'}),
-                        dbc.Button("📊 Export All Logs (CSV)", id='export-all-logs-btn', className="btn-secondary", style={'width': '100%', 'padding': '10px'}),
-                    ]),
-                    html.Div(id='export-status', style={'marginTop': '8px', 'fontSize': '12px', 'color': 'var(--text-secondary)'})
+                    html.Div("Record Shot Result", className="card-header"),
+                    html.P("Record whether the shot hit or missed the target", style={'fontSize': '14px', 'color': 'var(--text-secondary)', 'marginBottom': '12px'}),
+                    html.Div(style={'display': 'flex', 'flexDirection': 'column', 'gap': '12px'}, children=[
+                        dbc.Button(
+                            "✓ HIT", 
+                            id='record-hit-btn', 
+                            style={
+                                'width': '100%', 
+                                'padding': '20px', 
+                                'fontSize': '24px', 
+                                'fontWeight': 'bold',
+                                'backgroundColor': '#1a7f37',
+                                'borderColor': '#1a7f37',
+                                'color': 'white'
+                            }
+                        ),
+                        dbc.Button(
+                            "✗ MISS", 
+                            id='record-miss-btn',
+                            style={
+                                'width': '100%', 
+                                'padding': '20px', 
+                                'fontSize': '24px', 
+                                'fontWeight': 'bold',
+                                'backgroundColor': '#cf222e',
+                                'borderColor': '#cf222e',
+                                'color': 'white'
+                            }
+                        ),
+                    ])
                 ]),
             ]),
         ]),
