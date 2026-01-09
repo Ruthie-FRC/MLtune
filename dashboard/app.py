@@ -1342,6 +1342,9 @@ def toggle_sidebar(n_clicks, current_class):
 # Button Callback Functions
 # ============================================================================
 
+# Cache style dict for status indicator - microoptimization
+_STATUS_BASE_STYLE = {'fontSize': '11px', 'textAlign': 'center', 'padding': '4px', 'color': 'var(--text-secondary)'}
+
 @app.callback(
     [Output('app-state', 'data', allow_duplicate=True),
      Output('tuner-status-indicator', 'children'),
@@ -1359,11 +1362,11 @@ def handle_core_control_buttons(start_clicks, stop_clicks, run_clicks, skip_clic
     """Handle core control button clicks and actually control the tuner."""
     ctx = callback_context
     if not ctx.triggered:
-        return state, "", {'fontSize': '11px', 'textAlign': 'center', 'padding': '4px', 'color': 'var(--text-secondary)'}, "", "notification-banner"
+        return state, "", _STATUS_BASE_STYLE.copy(), "", "notification-banner"
     
     button_id = ctx.triggered[0]['prop_id'].split('.')[0]
     status_message = ""
-    status_style = {'fontSize': '11px', 'textAlign': 'center', 'padding': '4px', 'color': 'var(--text-secondary)'}
+    status_style = _STATUS_BASE_STYLE.copy()
     banner_message = ""
     banner_class = "notification-banner"
     
@@ -2265,6 +2268,11 @@ def update_dashboard_displays(state):
     return coeff, str(shots), f"{success:.1%}"
 
 
+# Cache style dicts for robot status - microoptimization to avoid recreating dicts
+_NA_STYLE = {'fontSize': '24px', 'fontWeight': '600', 'color': 'var(--text-secondary)'}
+_SUCCESS_STYLE = {'fontSize': '24px', 'fontWeight': '600', 'color': 'var(--success)'}
+_INFO_STYLE = {'fontSize': '24px', 'fontWeight': '600', 'color': 'var(--info)'}
+
 @app.callback(
     [Output('robot-battery', 'children'),
      Output('robot-battery', 'style'),
@@ -2283,23 +2291,22 @@ def update_robot_status_displays(state):
     connection_status = state.get('connection_status', 'disconnected')
     
     if connection_status == 'disconnected' or not connection_status or connection_status == '':
-        # Robot is disconnected - show N/A for all values
-        na_style = {'fontSize': '24px', 'fontWeight': '600', 'color': 'var(--text-secondary)'}
+        # Robot is disconnected - show N/A for all values (use cached style)
         return (
-            "N/A", na_style,
-            "N/A", na_style,
-            "N/A", na_style,
-            "N/A", na_style,
-            "N/A", na_style
+            "N/A", _NA_STYLE,
+            "N/A", _NA_STYLE,
+            "N/A", _NA_STYLE,
+            "N/A", _NA_STYLE,
+            "N/A", _NA_STYLE
         )
     else:
-        # Robot is connected - show actual values (placeholder for now)
+        # Robot is connected - show actual values (use cached styles)
         return (
-            "12.4V", {'fontSize': '24px', 'fontWeight': '600', 'color': 'var(--success)'},
-            "34%", {'fontSize': '24px', 'fontWeight': '600', 'color': 'var(--info)'},
-            "128MB", {'fontSize': '24px', 'fontWeight': '600', 'color': 'var(--info)'},
-            "42%", {'fontSize': '24px', 'fontWeight': '600', 'color': 'var(--success)'},
-            "18ms", {'fontSize': '24px', 'fontWeight': '600', 'color': 'var(--success)'}
+            "12.4V", _SUCCESS_STYLE,
+            "34%", _INFO_STYLE,
+            "128MB", _INFO_STYLE,
+            "42%", _SUCCESS_STYLE,
+            "18ms", _SUCCESS_STYLE
         )
 
 
@@ -2309,7 +2316,8 @@ def update_robot_status_displays(state):
      Output('status-bar-shots', 'children'),
      Output('status-bar-success', 'children')],
     [Input('update-interval', 'n_intervals')],
-    [State('app-state', 'data')]
+    [State('app-state', 'data')],
+    prevent_initial_call=True
 )
 def update_status_bar(n_intervals, state):
     """Update the status bar with current time and stats."""
