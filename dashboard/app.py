@@ -209,6 +209,9 @@ def create_dashboard_view():
             html.Span("Dashboard", className="breadcrumb-item active"),
         ]),
         
+        # Notification banner (auto-dismisses after 3 seconds)
+        html.Div(id='notification-banner', className='notification-banner', style={'display': 'none'}),
+        
         # Main dashboard grid
         html.Div(className='dashboard-grid', children=[
             # Left column - Quick actions and status
@@ -1342,7 +1345,9 @@ def toggle_sidebar(n_clicks, current_class):
 @app.callback(
     [Output('app-state', 'data', allow_duplicate=True),
      Output('tuner-status-indicator', 'children'),
-     Output('tuner-status-indicator', 'style')],
+     Output('tuner-status-indicator', 'style'),
+     Output('notification-banner', 'children'),
+     Output('notification-banner', 'className')],
     [Input('start-tuner-btn', 'n_clicks'),
      Input('stop-tuner-btn', 'n_clicks'),
      Input('run-optimization-btn', 'n_clicks'),
@@ -1354,17 +1359,21 @@ def handle_core_control_buttons(start_clicks, stop_clicks, run_clicks, skip_clic
     """Handle core control button clicks and actually control the tuner."""
     ctx = callback_context
     if not ctx.triggered:
-        return state, "", {'fontSize': '11px', 'textAlign': 'center', 'padding': '4px', 'color': 'var(--text-secondary)'}
+        return state, "", {'fontSize': '11px', 'textAlign': 'center', 'padding': '4px', 'color': 'var(--text-secondary)'}, "", "notification-banner"
     
     button_id = ctx.triggered[0]['prop_id'].split('.')[0]
     status_message = ""
     status_style = {'fontSize': '11px', 'textAlign': 'center', 'padding': '4px', 'color': 'var(--text-secondary)'}
+    banner_message = ""
+    banner_class = "notification-banner"
     
     if button_id == 'start-tuner-btn':
         state['tuner_enabled'] = True
         print("✅ Tuner Started")
         status_message = "✓ Tuner Started"
         status_style['color'] = 'var(--success)'
+        banner_message = "Tuner Started"
+        banner_class = "notification-banner notification-banner-visible notification-banner-success"
         if tuner_coordinator:
             try:
                 tuner_coordinator.start()
@@ -1373,12 +1382,16 @@ def handle_core_control_buttons(start_clicks, stop_clicks, run_clicks, skip_clic
                 print(f"Error starting tuner: {e}")
                 status_message = f"⚠️ Error: {str(e)[:30]}"
                 status_style['color'] = 'var(--danger)'
+                banner_message = f"Error: {str(e)[:50]}"
+                banner_class = "notification-banner notification-banner-visible notification-banner-danger"
         
     elif button_id == 'stop-tuner-btn':
         state['tuner_enabled'] = False
         print("⛔ Tuner Stopped")
         status_message = "✓ Tuner Stopped"
         status_style['color'] = 'var(--danger)'
+        banner_message = "Tuner Stopped"
+        banner_class = "notification-banner notification-banner-visible notification-banner-danger"
         if tuner_coordinator:
             try:
                 tuner_coordinator.stop()
@@ -1387,11 +1400,15 @@ def handle_core_control_buttons(start_clicks, stop_clicks, run_clicks, skip_clic
                 print(f"Error stopping tuner: {e}")
                 status_message = f"⚠️ Error: {str(e)[:30]}"
                 status_style['color'] = 'var(--danger)'
+                banner_message = f"Error: {str(e)[:50]}"
+                banner_class = "notification-banner notification-banner-visible notification-banner-danger"
         
     elif button_id == 'run-optimization-btn':
         print("🔄 Running Optimization...")
         status_message = "🔄 Optimization running..."
         status_style['color'] = 'var(--primary)'
+        banner_message = "Optimization Reset"
+        banner_class = "notification-banner notification-banner-visible notification-banner-warning"
         if tuner_coordinator:
             try:
                 tuner_coordinator.trigger_optimization()
@@ -1402,6 +1419,8 @@ def handle_core_control_buttons(start_clicks, stop_clicks, run_clicks, skip_clic
                 print(f"Error triggering optimization: {e}")
                 status_message = f"⚠️ Error: {str(e)[:30]}"
                 status_style['color'] = 'var(--danger)'
+                banner_message = f"Error: {str(e)[:50]}"
+                banner_class = "notification-banner notification-banner-visible notification-banner-danger"
         else:
             print("⚠️ Tuner not available - running in demo mode")
             status_message = "⚠️ Demo mode"
@@ -1409,6 +1428,8 @@ def handle_core_control_buttons(start_clicks, stop_clicks, run_clicks, skip_clic
         
     elif button_id == 'skip-coefficient-btn':
         print("⏭️ Skipping to Next Coefficient")
+        banner_message = "Coefficient Reset"
+        banner_class = "notification-banner notification-banner-visible notification-banner-warning"
         if tuner_coordinator and tuner_coordinator.optimizer:
             try:
                 tuner_coordinator.optimizer.advance_to_next_coefficient()
@@ -1423,12 +1444,14 @@ def handle_core_control_buttons(start_clicks, stop_clicks, run_clicks, skip_clic
                 print(f"Error skipping coefficient: {e}")
                 status_message = f"⚠️ Error: {str(e)[:30]}"
                 status_style['color'] = 'var(--danger)'
+                banner_message = f"Error: {str(e)[:50]}"
+                banner_class = "notification-banner notification-banner-visible notification-banner-danger"
         else:
             print("⚠️ Tuner not available - running in demo mode")
             status_message = "⚠️ Tuner not available"
             status_style['color'] = 'var(--warning)'
     
-    return state, status_message, status_style
+    return state, status_message, status_style, banner_message, banner_class
 
 
 @app.callback(
@@ -2312,6 +2335,26 @@ app.clientside_callback(
     [Output('status-bar-time', 'children', allow_duplicate=True),
      Output('status-bar-date', 'children', allow_duplicate=True)],
     [Input('update-interval', 'n_intervals')],
+    prevent_initial_call=True
+)
+
+# Auto-dismiss notification banner after 3 seconds
+app.clientside_callback(
+    """
+    function(className) {
+        if (className && className.includes('notification-banner-visible')) {
+            setTimeout(function() {
+                const banner = document.getElementById('notification-banner');
+                if (banner) {
+                    banner.className = 'notification-banner';
+                }
+            }, 3000);
+        }
+        return window.dash_clientside.no_update;
+    }
+    """,
+    Output('notification-banner', 'id', allow_duplicate=True),
+    [Input('notification-banner', 'className')],
     prevent_initial_call=True
 )
 
