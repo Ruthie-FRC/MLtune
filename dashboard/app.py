@@ -388,6 +388,34 @@ def create_coefficients_view():
                 ]),
             ]) for coeff, params in coefficients.items()
         ]),
+        
+        # Coefficient History Table
+        html.Div(className="card", style={'marginTop': '16px'}, children=[
+            html.Div("Coefficient History", className="card-header"),
+            html.P("Track all coefficient changes over time", style={'color': 'var(--text-secondary)', 'fontSize': '14px', 'marginBottom': '12px'}),
+            html.Div(id='coefficient-history-table', children=[
+                html.Table(className="table-github", children=[
+                    html.Thead([
+                        html.Tr([
+                            html.Th("Timestamp"),
+                            html.Th("Coefficient"),
+                            html.Th("Old Value"),
+                            html.Th("New Value"),
+                            html.Th("Reason"),
+                        ])
+                    ]),
+                    html.Tbody([
+                        html.Tr([
+                            html.Td("--:--:--"),
+                            html.Td("--"),
+                            html.Td("--"),
+                            html.Td("--"),
+                            html.Td("No history yet")
+                        ])
+                    ])
+                ])
+            ])
+        ]),
     ])
 
 
